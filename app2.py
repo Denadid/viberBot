@@ -10,7 +10,7 @@ from user import User
 import json
 import random
 import sqlite3
-from DataTable import Users, Learning, Words, Examples, Base, engine
+from DataTable import Users, Learning, Words, Examples, Base, engine, input_data
 from datetime import datetime
 
 app = Flask(__name__)
@@ -83,6 +83,9 @@ def parsing_request(viber_request):
             viber.send_messages(user_id, [
                 TextMessage(text=message)
             ])
+
+        if message == "inputdata":
+            input_data()
 
         # Продолжение уже начатого раунда, если раунд не закончился
         total_count_raund = 5  # Общее количество раундов (по условию)

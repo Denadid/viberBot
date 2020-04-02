@@ -2,12 +2,15 @@ from sqlalchemy import create_engine, MetaData, ForeignKey, Column, Integer, Str
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
+import json
 
 # Декларативный базовый класс
 Base = declarative_base()
 
 # Подключение к БД
-engine = create_engine('postgres://waactudsnfbwxu:e73f01ad438e68683523415d9317065e7e3995a036d26451c6fe166b186cc775@ec2-54-75-231-215.eu-west-1.compute.amazonaws.com:5432/d6cpom1s22furu', echo=True)
+engine = create_engine(
+    'postgres://waactudsnfbwxu:e73f01ad438e68683523415d9317065e7e3995a036d26451c6fe166b186cc775@ec2-54-75-231-215.eu-west-1.compute.amazonaws.com:5432/d6cpom1s22furu',
+    echo=True)
 metadata = MetaData()
 
 # Сессия
@@ -78,13 +81,15 @@ class Users(Base):
 
         # Получаем количество выученных слов
         session = Session()
-        learned_value = session.query(Learning.word).filter(Learning.user == user_id).filter(Learning.count_correct_answer > 20).count()
+        learned_value = session.query(Learning.word).filter(Learning.user == user_id).filter(
+            Learning.count_correct_answer > 20).count()
         session.close()
         data_user.append(learned_value)
 
         # Получаем слова, которые находятся в процессе изучения
         session = Session()
-        learn_value = session.query(Learning.word).filter(Learning.user == user_id).filter(Learning.count_correct_answer > 0).count()
+        learn_value = session.query(Learning.word).filter(Learning.user == user_id).filter(
+            Learning.count_correct_answer > 0).count()
         session.close()
         data_user.append(learn_value)
 
@@ -121,7 +126,8 @@ class Learning(Base):
 
     def set_learning(self, user, translate, true_or_false):
         session = Session()
-        ret_value = session.query(Learning.count_correct_answer, Learning.word).filter(Learning.word == Words.word_id).filter(Learning.user == user).filter(Words.translate == translate).one()
+        ret_value = session.query(Learning.count_correct_answer, Learning.word).filter(
+            Learning.word == Words.word_id).filter(Learning.user == user).filter(Words.translate == translate).one()
         session.close()
 
         # Количество правильных ответов на слово
@@ -145,7 +151,8 @@ class Learning(Base):
 
     def reset_true_answer(self, user, word):
         session = Session()
-        update_true_answer = session.query(Learning).filter(Learning.word == Words.word_id).filter(Learning.user == user).filter(Words.translate == word).one()
+        update_true_answer = session.query(Learning).filter(Learning.word == Words.word_id).filter(
+            Learning.user == user).filter(Words.translate == word).one()
         update_true_answer.count_correct_answer = 0
 
 
@@ -160,3 +167,28 @@ class Examples(Base):
     word = Column(String, ForeignKey('words.word_id'), primary_key=True, nullable=False)
     id = Column(Integer, primary_key=True)
     example = Column(String)
+
+
+def input_data():
+    # Разбор файла "english_words" на элементы. При инициализации flask-приложения
+    with open("english_words.json", "r", encoding="utf-8") as read_file:
+        study_elements = json.load(read_file)
+
+    for item in study_elements:
+        session = Session()
+        add_word = Words(word_id=item["word"],
+                         translate=item["translation"])
+        # Добавление нового слова
+        session.add(add_word)
+        session.commit()
+        session.close()
+
+        for item1 in item["examples"]:
+            session = Session()
+            add_exampl = Examples(word=item["word"],
+                                  example=item1)
+            # Добавление нового примера
+            session.add(add_exampl)
+            session.commit()
+            session.close()
+
