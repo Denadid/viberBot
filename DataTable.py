@@ -175,20 +175,27 @@ def input_data():
         study_elements = json.load(read_file)
 
     for item in study_elements:
-        session = Session()
-        add_word = Words(word_id=item["word"],
-                         translate=item["translation"])
-        # Добавление нового слова
-        session.add(add_word)
-        session.commit()
-        session.close()
-
-        for item1 in item["examples"]:
+        try:
             session = Session()
-            add_exampl = Examples(word=item["word"],
-                                  example=item1)
-            # Добавление нового примера
-            session.add(add_exampl)
+            add_word = Words(word_id=item["word"],
+                            translate=item["translation"])
+            # Добавление нового слова
+            session.add(add_word)
             session.commit()
             session.close()
+        except:
+            print()
+
+        for item1 in item["examples"]:
+            try:
+                session = Session()
+                add_exampl = Examples(word=item["word"],
+                                    example=item1)
+                # Добавление нового примера
+                session.add(add_exampl)
+                session.commit()
+                session.close()
+            except:
+                print()
+
 
