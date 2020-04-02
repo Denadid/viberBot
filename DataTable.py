@@ -178,7 +178,7 @@ def input_data():
         try:
             session = Session()
             add_word = Words(word_id=item["word"],
-                            translate=item["translation"])
+                             translate=item["translation"])
             # Добавление нового слова
             session.add(add_word)
             session.commit()
@@ -188,16 +188,10 @@ def input_data():
             session.close()
 
         for item1 in item["examples"]:
-            try:
                 session = Session()
                 add_exampl = Examples(word=item["word"],
-                                    example=item1)
+                                      example=item1)
                 # Добавление нового примера
                 session.add(add_exampl)
                 session.commit()
                 session.close()
-            except:
-                session.rollback()
-                session.close()
-
-
