@@ -118,8 +118,8 @@ class Users(Base):
 
 class Learning(Base):
     __tablename__ = 'learning'
-    user = Column(String, ForeignKey('users.user_id'), primary_key=True, nullable=False)
-    word = Column(String, ForeignKey('words.word_id'), primary_key=True, nullable=False)
+    user = Column(String, ForeignKey('users.user_id'), nullable=False)
+    word = Column(String, ForeignKey('words.word_id'), nullable=False)
     id = Column(Integer, primary_key=True)
     count_correct_answer = Column(Integer)
     last_time_answer = Column(DateTime)
@@ -164,7 +164,7 @@ class Words(Base):
 
 class Examples(Base):
     __tablename__ = 'examples'
-    word = Column(String, ForeignKey('words.word_id'), primary_key=True, nullable=False)
+    word = Column(String, ForeignKey('words.word_id'), nullable=False)
     id = Column(Integer, primary_key=True)
     example = Column(String)
 
