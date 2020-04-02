@@ -83,9 +83,11 @@ def parsing_request(viber_request):
             viber.send_messages(user_id, [
                 TextMessage(text=message)
             ])
+            return
 
         if message == "inputdata":
             input_data()
+            return 
 
         # Продолжение уже начатого раунда, если раунд не закончился
         total_count_raund = 5  # Общее количество раундов (по условию)
