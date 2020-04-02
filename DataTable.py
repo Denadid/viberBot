@@ -184,7 +184,8 @@ def input_data():
             session.commit()
             session.close()
         except:
-            print()
+            session.rollback()
+            session.close()
 
         for item1 in item["examples"]:
             try:
@@ -196,6 +197,7 @@ def input_data():
                 session.commit()
                 session.close()
             except:
-                print()
+                session.rollback()
+                session.close()
 
 
