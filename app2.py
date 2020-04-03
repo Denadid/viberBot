@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template
 from viberbot import Api
 from viberbot.api.bot_configuration import BotConfiguration
 from viberbot.api.messages.text_message import TextMessage
@@ -9,7 +9,6 @@ from OtherSettings import start_keyboard, round_keyboard, clock_keyboard
 from user import User
 import json
 import random
-import sqlite3
 from DataTable import Users, Learning, Words, Examples, Base, engine, input_data
 from datetime import datetime
 
@@ -48,6 +47,12 @@ def incoming():
 
     # Успешно обработанный запрос
     return Response(status=200)
+
+
+# URL-адрес по умолчанию
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
 # Обработка запроса от пользователя
