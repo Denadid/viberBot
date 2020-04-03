@@ -191,6 +191,7 @@ class Examples(Base):
 # Таблица настроек бота
 class Settings(Base):
     __tablename__ = 'settings'
+    id = Column(Integer, primary_key=True)
     clock_time = Column(Integer, nullable=False)
     count_word_raund = Column(Integer, nullable=False)
     cuunt_true_answer = Column(Integer, nullable=False)
