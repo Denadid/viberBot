@@ -40,15 +40,20 @@ class Users(Base):
         # Привязка всех слов для заучивания к юзеру
         words = session.query(Words.word_id).all()
         session.close()
-        session = Session()
+
         for word in words:
-            learning = Learning(user=user_id,
-                                word=word[0],
-                                count_correct_answer=0,
-                                last_time_answer=None)
-            session.add(learning)
-            session.commit()
-        session.close()
+            session = Session()
+            try:
+                learning = Learning(user=user_id,
+                                    word=word[0],
+                                    count_correct_answer=0,
+                                    last_time_answer=None)
+                session.add(learning)
+                session.commit()
+                session.close()
+            except:
+                session.rollback()
+                session.close()
 
     # Поиск покупателя в БД
     def find_user(self, user_id):
@@ -118,9 +123,9 @@ class Users(Base):
 
 class Learning(Base):
     __tablename__ = 'learning'
+    id = Column(Integer, primary_key=True)
     user = Column(String, ForeignKey('users.user_id'), nullable=False)
     word = Column(String, ForeignKey('words.word_id'), nullable=False)
-    id = Column(Integer, primary_key=True)
     count_correct_answer = Column(Integer)
     last_time_answer = Column(DateTime)
 
@@ -164,8 +169,8 @@ class Words(Base):
 
 class Examples(Base):
     __tablename__ = 'examples'
-    word = Column(String, ForeignKey('words.word_id'), nullable=False)
     id = Column(Integer, primary_key=True)
+    word = Column(String, ForeignKey('words.word_id'), nullable=False)
     example = Column(String)
 
 
