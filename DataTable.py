@@ -197,21 +197,21 @@ class Settings(Base):
     cuunt_true_answer = Column(Integer, nullable=False)
 
     @staticmethod
-    def get_clock_time(self):
+    def get_clock_time():
         session = Session()
         select_q = session.query(Settings.clock_time).one()
         session.close()
         return select_q[0]
 
     @staticmethod
-    def get_count_word_raund(self):
+    def get_count_word_raund():
         session = Session()
         select_q = session.query(Settings.count_word_raund).one()
         session.close()
         return select_q[0]
 
     @staticmethod
-    def get_cuunt_true_answer(self):
+    def get_cuunt_true_answer():
         session = Session()
         select_q = session.query(Settings.cuunt_true_answer).one()
         session.close()
