@@ -39,7 +39,7 @@ for item in study_elements:
 @app.route('/incoming', methods=['POST'])
 def incoming():
     Base.metadata.create_all(engine)
-    default_settings()
+    #default_settings()
     # Входящий запрос
     viber_request = viber.parse_request(request.get_data())
 
