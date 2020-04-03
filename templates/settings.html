@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Настройки</title>
 </head>
-<body>
+    <body>
+    <form method="GET" action="/result_settings">
+        Время, через которое бот будет напоминать о необходимости повторить слова:
+        <input type="text" name="time_remiend"><br>
+        Количество слов в одном раунде заучивания:
+        <input type="text" name="count_word"><br>
+        Количество правильных ответов, после которых считается, что слово выучено:
+        <input type="text" name="count_answer"><br>
+        <input type="submit" value="Сохранить"><br><br>
+    </form>
 
-</body>
+    </body>
 </html>

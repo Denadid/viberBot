@@ -85,9 +85,10 @@ class Users(Base):
         data_user.append(time_value[0])
 
         # Получаем количество выученных слов
+        count_ans = int(Settings.get_cuunt_true_answer())
         session = Session()
         learned_value = session.query(Learning.word).filter(Learning.user == user_id).filter(
-            Learning.count_correct_answer > 20).count()
+            Learning.count_correct_answer > count_ans).count()
         session.close()
         data_user.append(learned_value)
 
@@ -112,10 +113,11 @@ class Users(Base):
         session = Session()
         select_user = session.query(Users.user_id, Users.last_time).all()
         session.close()
+        clock_time = int(Settings.get_clock_time())
         lst_id = []
         for s in select_user:
             delta = datetime.now() - s[1]
-            if (delta.seconds / 60) > 3:
+            if (delta.seconds / 60) > clock_time:
                 lst_id.append(s[0])
 
         return lst_id
@@ -144,35 +146,100 @@ class Learning(Base):
         if true_or_false == 1:
             count += 1
 
-        # Апдейт таблицы
-        session = Session()
-        update_query = session.query(Learning).filter(Learning.user == user).filter(Learning.word == one_word).one()
-        update_query.count_correct_answer = count
-        update_query.last_time_answer = datetime.now()
-        session.commit()
-        session.close()
+        try:
+            # Апдейт таблицы
+            session = Session()
+            update_query = session.query(Learning).filter(Learning.user == user).filter(Learning.word == one_word).one()
+            update_query.count_correct_answer = count
+            update_query.last_time_answer = datetime.now()
+            session.commit()
+            session.close()
+        except:
+            session.rollback()
+            session.close()
 
         return count
 
     def reset_true_answer(self, user, word):
-        session = Session()
-        update_true_answer = session.query(Learning).filter(Learning.word == Words.word_id).filter(
-            Learning.user == user).filter(Words.translate == word).one()
-        update_true_answer.count_correct_answer = 0
+        try:
+            session = Session()
+            update_true_answer = session.query(Learning).filter(Learning.word == Words.word_id).filter(
+                Learning.user == user).filter(Words.translate == word).one()
+            update_true_answer.count_correct_answer = 0
+            session.commit()
+            session.close()
+        except:
+            session.rollback()
+            session.close()
 
 
+# Таблица всех слов и их переводов
 class Words(Base):
     __tablename__ = 'words'
     word_id = Column(String, primary_key=True)
     translate = Column(String)
 
 
+# Таблица примеров
 class Examples(Base):
     __tablename__ = 'examples'
     id = Column(Integer, primary_key=True)
     word = Column(String, ForeignKey('words.word_id'), nullable=False)
     example = Column(String)
 
+
+# Таблица настроек бота
+class Settings(Base):
+    __tablename__ = 'settings'
+    clock_time = Column(Integer, nullable=False)
+    count_word_raund = Column(Integer, nullable=False)
+    cuunt_true_answer = Column(Integer, nullable=False)
+
+    @staticmethod
+    def get_clock_time(self):
+        session = Session()
+        select_q = session.query(Settings.clock_time).one()
+        session.close()
+        return select_q[0]
+
+    @staticmethod
+    def get_count_word_raund(self):
+        session = Session()
+        select_q = session.query(Settings.count_word_raund).one()
+        session.close()
+        return select_q[0]
+
+    @staticmethod
+    def get_cuunt_true_answer(self):
+        session = Session()
+        select_q = session.query(Settings.cuunt_true_answer).one()
+        session.close()
+        return select_q[0]
+
+    # Изменение настроек
+    def edit_settings(self, ct, cwr, cta):
+        try:
+            session = Session()
+            update_setting = session.query(Settings).one()
+            update_setting.clock_time = ct
+            update_setting.count_word_raund = cwr
+            update_setting.cuunt_true_answer = cta
+            session.commit()
+            session.close()
+        except:
+            session.rollback()
+            session.close()
+
+
+# Дефолтные настройки
+def default_settings(self):
+    session = Session()
+    setting = Settings(clock_time=3,
+                       count_word_raund=5,
+                       cuunt_true_answer=20)
+    session.add(setting)
+    session.commit()
+    session.close()
 
 def input_data():
     # Разбор файла "english_words" на элементы. При инициализации flask-приложения

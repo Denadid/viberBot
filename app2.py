@@ -9,7 +9,7 @@ from OtherSettings import start_keyboard, round_keyboard, clock_keyboard
 from user import User
 import json
 import random
-from DataTable import Users, Learning, Words, Examples, Base, engine, input_data
+from DataTable import Users, Learning, Words, Examples, Base, engine, input_data, default_settings, Settings
 from datetime import datetime
 
 app = Flask(__name__)
@@ -55,6 +55,22 @@ def index():
     return render_template('index.html')
 
 
+# URL-адрес для настроек бота
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
+
+# Получение значений настроек бота
+@app.route('/result_settings')
+def result_settings():
+    time_remiend = int(request.args.get('time_remiend'))
+    count_word = int(request.args.get('count_word'))
+    count_answer = int(request.args.get('count_answer'))
+    setting = Settings()
+    setting.edit_settings(time_remiend, count_word, count_answer)
+
+
+
 # Обработка запроса от пользователя
 def parsing_request(viber_request):
     # Действия для новых пользователей
@@ -94,9 +110,13 @@ def parsing_request(viber_request):
             input_data()
             return
 
-        # Продолжение уже начатого раунда, если раунд не закончился
-        total_count_raund = 5  # Общее количество раундов (по условию)
+        # Устанвка дефолтных настроек
+        if message == "defaultsettings":
+            default_settings()
+            return
 
+        # Продолжение уже начатого раунда, если раунд не закончился
+        total_count_raund = int(Settings.get_count_word_raund())  # Общее количество раундов (по условию)
 
         # Обработка команды "show_example": вывод примера употребления слова
         if viber_request.message.text == "show_example":
@@ -131,13 +151,13 @@ def show_start_area(viber_request, userID):
     # Имя пользователя
     user_name = user.get_name_user(userID)
     if data_us[0] == None:
-        message = "Приветствую вас, " + user_name + "!\n" +\
+        message = "Приветствую вас, " + user_name + "!\n" + \
                   "Этот бот предназначен для заучивания английских слов. Для начала работы введите start или нажмите " \
                   "на кнопку внизу. "
     else:
-        message = "Приветствую вас, " + user_name + "!\n" + f"Время последнего прохождения опроса: {data_us[0]}" + ".\n"+\
-                   f" Количество выученных слов: {data_us[1]}" + f". Количесвто слов, которые находятся в процессе " \
-                                                                 f"заучивания: {data_us[2]}" + ". "
+        message = "Приветствую вас, " + user_name + "!\n" + f"Время последнего прохождения опроса: {data_us[0]}" + ".\n" + \
+                  f" Количество выученных слов: {data_us[1]}" + f". Количесвто слов, которые находятся в процессе " \
+                                                                f"заучивания: {data_us[2]}" + ". "
 
     # Отправка сообщения
     viber.send_messages(userID, [
