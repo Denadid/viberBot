@@ -198,10 +198,13 @@ class Settings(Base):
 
     @staticmethod
     def get_clock_time():
-        session = Session()
-        select_q = session.query(Settings.clock_time).one()
-        session.close()
-        return select_q[0]
+        try:
+            session = Session()
+            select_q = session.query(Settings.clock_time).one()
+            session.close()
+            return select_q[0]
+        except:
+            return -1
 
     @staticmethod
     def get_count_word_raund():

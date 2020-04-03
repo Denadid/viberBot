@@ -39,7 +39,7 @@ for item in study_elements:
 @app.route('/incoming', methods=['POST'])
 def incoming():
     Base.metadata.create_all(engine)
-    if Settings.get_clock_time() == None:
+    if Settings.get_clock_time() == -1:
         default_settings()
     # Входящий запрос
     viber_request = viber.parse_request(request.get_data())
