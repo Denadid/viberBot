@@ -39,6 +39,7 @@ for item in study_elements:
 @app.route('/incoming', methods=['POST'])
 def incoming():
     Base.metadata.create_all(engine)
+    default_settings()
     # Входящий запрос
     viber_request = viber.parse_request(request.get_data())
 
@@ -108,11 +109,6 @@ def parsing_request(viber_request):
 
         if message == "inputdata":
             input_data()
-            return
-
-        # Устанвка дефолтных настроек
-        if message == "defaultsettings":
-            default_settings()
             return
 
         # Продолжение уже начатого раунда, если раунд не закончился
