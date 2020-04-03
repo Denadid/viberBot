@@ -233,7 +233,7 @@ class Settings(Base):
 
 
 # Дефолтные настройки
-def default_settings(self):
+def default_settings():
     session = Session()
     setting = Settings(clock_time=3,
                        count_word_raund=5,
