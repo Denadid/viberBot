@@ -188,6 +188,7 @@ def input_data():
             session.close()
 
         for item1 in item["examples"]:
+            try:
                 session = Session()
                 add_exampl = Examples(word=item["word"],
                                       example=item1)
@@ -195,3 +196,7 @@ def input_data():
                 session.add(add_exampl)
                 session.commit()
                 session.close()
+            except:
+                session.rollback()
+                session.close()
+
