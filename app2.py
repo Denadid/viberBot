@@ -62,6 +62,7 @@ def index():
 def settings():
     return render_template('settings.html')
 
+
 # Получение значений настроек бота
 @app.route('/result_settings')
 def result_settings():
@@ -70,7 +71,7 @@ def result_settings():
     count_answer = int(request.args.get('count_answer'))
     setting = Settings()
     setting.edit_settings(time_remiend, count_word, count_answer)
-
+    return render_template('settings.html')
 
 
 # Обработка запроса от пользователя
