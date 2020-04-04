@@ -38,7 +38,7 @@ for item in study_elements:
 # Обработка приходящих запросов
 @app.route('/incoming', methods=['POST'])
 def incoming():
-    Base.metadata.create_all(engine)
+   #Base.metadata.create_all(engine)
     if Settings.get_clock_time() == -1:
         default_settings()
     # Входящий запрос
@@ -187,7 +187,7 @@ def show_round_area(user1):
 
     # Сохранения новых параметров пользователя
     users_base[user1].example_list = [item for item in example_list]
-    print(users_base[user1].count_question)
+    print('*******count_question: ', users_base[user1].count_question)
     users_base[user1].count_question += 1
     users_base[user1].current_word_rus = translation
     users_base[user1].current_word_eng = word
