@@ -125,7 +125,7 @@ def parsing_request(viber_request):
 
             # Сброс примеров употребления
             users_base[user_id].example_list.clear()
-
+        print('***********total_count_raund: ', total_count_raund)
         if users_base[user_id].count_question < total_count_raund:
             # Продолжение раунда
             show_round_area(user_id)
