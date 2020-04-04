@@ -187,6 +187,7 @@ def show_round_area(user1):
 
     # Сохранения новых параметров пользователя
     users_base[user1].example_list = [item for item in example_list]
+    print(users_base[user1].count_question)
     users_base[user1].count_question += 1
     users_base[user1].current_word_rus = translation
     users_base[user1].current_word_eng = word
