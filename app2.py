@@ -6,10 +6,9 @@ from viberbot.api.viber_requests import ViberConversationStartedRequest
 from viberbot.api.viber_requests import ViberMessageRequest
 from Setting import TOKEN
 from OtherSettings import start_keyboard, round_keyboard, clock_keyboard
-from user import User
 import json
 import random
-from DataTable import Users, Learning, Words, Examples, Base, engine, input_data, default_settings, Settings
+from DataTable import Users, Learning, Words, Examples, Base, engine, input_data, default_settings, Settings, DataRaund
 from datetime import datetime
 
 app = Flask(__name__)
@@ -21,24 +20,12 @@ viber = Api(BotConfiguration(
     auth_token=TOKEN
 ))
 
-users_base = {}  # База пользователей (key: user_id, value: User object)
-study_elements = []  # Элементы для изучения
-study_words = []  # Слова для изучения ("word" (англ.))
-
 user = Users()
-# Разбор файла "english_words" на элементы. При инициализации flask-приложения
-with open("english_words.json", "r", encoding="utf-8") as read_file:
-    study_elements = json.load(read_file)
-
-# Выделение только слов для изучения ("word") из study_elements
-for item in study_elements:
-    study_words.append(item["translation"])
-
 
 # Обработка приходящих запросов
 @app.route('/incoming', methods=['POST'])
 def incoming():
-   #Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
     if Settings.get_clock_time() == -1:
         default_settings()
     # Входящий запрос
@@ -82,7 +69,6 @@ def parsing_request(viber_request):
         if user.find_user(viber_request.user.id) == -1:
             user.add_user(viber_request.user.id, viber_request.user.name)
         user_id = user.find_user(viber_request.user.id)
-        users_base[user_id] = User(user_id, 0, 0, 0, None, None)
 
         # Вывод стартового окна
         show_start_area(viber_request, user_id)
@@ -90,12 +76,12 @@ def parsing_request(viber_request):
     # Действия для пользователей из базы (уже подписавшихся)
     if isinstance(viber_request, ViberMessageRequest):
         user_id = user.find_user(viber_request.sender.id)
+        raund = DataRaund()
         # Обработка команды "start": запуск нового раунда
         message = viber_request.message.text
         if message == "start":
             # Вывод "второго" окна
-            users_base[user_id] = User(user_id, 0, 0, 0, None, None)
-            show_round_area(user_id)
+            show_round_area(user_id, raund)
             return
 
         if message == "remiend":
@@ -121,22 +107,20 @@ def parsing_request(viber_request):
             send_example_message(user_id)
         else:  # Если пользователь не запросил вывода примера и выбрал слово
             # Проверка на правильность ответа
-            check_answer(viber_request, user_id)
+            check_answer(viber_request, user_id, raund)
 
-            # Сброс примеров употребления
-            users_base[user_id].example_list.clear()
-        print('***********total_count_raund: ', total_count_raund)
-        if users_base[user_id].count_question < total_count_raund:
+        num_question = DataRaund.get_one_answer(user_id)[0]
+
+        if num_question < total_count_raund:
             # Продолжение раунда
-            show_round_area(user_id)
+            show_round_area(user_id, raund)
         else:  # При ответе на 10 вопросв - закончить раунд
             # Вывод результата раунда
             send_result_message(user_id)
 
             # Сброс данных пользователя
-            users_base[user_id].count_question = 0
-            users_base[user_id].num_correct_answers = 0
-            users_base[user_id].num_incorrect_answers = 0
+            num_question = 0
+            raund.set_one_answer(user_id, None, num_question, 0, 0)
 
             # Вывод стартового окна
             show_start_area(viber_request, user_id)
@@ -166,43 +150,34 @@ def show_start_area(viber_request, userID):
 
 
 # Отправка "второго" экрана
-def show_round_area(user1):
-    # Количество доступных для изучения слов
-    count_words = len(study_elements)
-
-    # Случаный элемент для изучения
-    num_item = random.randint(0, count_words - 1)
-    study_item = study_elements[num_item]
-
-    # Разбор study_item
-    word = study_item["word"]
-    translation = study_item["translation"]
-    example_list = study_item["examples"]
+def show_round_area(user1, raund):
+    # Рандомное слово для изучения
+    word = Words.get_one_random_word()
 
     # Расстановка кнопок на клавиатуре
-    set_round_keyboard(translation)
+    set_round_keyboard(word)
 
     # Отправка сообщения с вопросом
     send_question_message(user1, word)
 
     # Сохранения новых параметров пользователя
-    users_base[user1].example_list = [item for item in example_list]
-    print('*******count_question: ', users_base[user1].count_question)
-    users_base[user1].count_question += 1
-    users_base[user1].current_word_rus = translation
-    users_base[user1].current_word_eng = word
+    num_question = DataRaund.get_one_answer(user1)[0]
+    num_question += 1
+    num_correct_answer = DataRaund.get_one_answer()[1]
+    num_incorrect_answers = DataRaund.get_one_answer()[2]
+    raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
 
 
 # Показать пример использования слова пользователю
 def send_example_message(user1):
     # Вытащить случайное предложение с примером употребления слова
-    # Текущее количество предложений и с примерами употребления слова
-    count_example_words = len(users_base[user1].example_list)
-    example = str(users_base[user1].example_list[random.randint(0, count_example_words - 1)])
+    word = DataRaund.get_word(user1)
+    examples = Examples.get_example(word)
+    rand_example = examples[random.randint(0, len(examples) - 1)][0]
 
     # Ответ
     viber.send_messages(user1, [
-        TextMessage(text=example,
+        TextMessage(text=rand_example,
                     keyboard=round_keyboard,
                     tracking_data='tracking_data')
     ])
@@ -211,7 +186,8 @@ def send_example_message(user1):
 # Отправка сообщения с вопросом
 def send_question_message(user1, word):
     # Формирование ответного сообщения
-    message = f"{users_base[user1].count_question + 1}. Как переводится с английского слово [{word}]?"
+    count_question = DataRaund.get_one_answer()[0]
+    message = f"{count_question + 1}. Как переводится с английского слово [{word}]?"
     # Отправка сообщения
     viber.send_messages(user1, [
         TextMessage(text=message,
@@ -221,9 +197,12 @@ def send_question_message(user1, word):
 
 
 # Динамическая настройка клавиатуры
-def set_round_keyboard(correct_word):
+def set_round_keyboard(word):
     # Случайная последовательность неправильных слов
-    wrong_words = random.sample(study_words, 3)
+    false_words = Words.get_false_translates(word)
+    f_words = random.sample(false_words, 3)
+    # Правильное слово
+    correct_word = Words.get_true_translate(word)
 
     # Случайная последовательность для нумерации кнопок
     rand_list = random.sample([0, 1, 2, 3], 4)
@@ -233,22 +212,29 @@ def set_round_keyboard(correct_word):
     round_keyboard["Buttons"][rand_list[0]]["ActionBody"] = correct_word
 
     # Расстановка неправильных слов на случайную кнопку
-    round_keyboard["Buttons"][rand_list[1]]["Text"] = wrong_words[0]
-    round_keyboard["Buttons"][rand_list[1]]["ActionBody"] = wrong_words[0]
+    round_keyboard["Buttons"][rand_list[1]]["Text"] = f_words[0][0]
+    round_keyboard["Buttons"][rand_list[1]]["ActionBody"] = f_words[0][0]
 
-    round_keyboard["Buttons"][rand_list[2]]["Text"] = wrong_words[1]
-    round_keyboard["Buttons"][rand_list[2]]["ActionBody"] = wrong_words[1]
+    round_keyboard["Buttons"][rand_list[2]]["Text"] = f_words[1][0]
+    round_keyboard["Buttons"][rand_list[2]]["ActionBody"] = f_words[1][0]
 
-    round_keyboard["Buttons"][rand_list[3]]["Text"] = wrong_words[2]
-    round_keyboard["Buttons"][rand_list[3]]["ActionBody"] = wrong_words[2]
+    round_keyboard["Buttons"][rand_list[3]]["Text"] = f_words[2][0]
+    round_keyboard["Buttons"][rand_list[3]]["ActionBody"] = f_words[2][0]
 
 
 # Проверка ответа на правильность
-def check_answer(viber_request, user1):
+def check_answer(viber_request, user1, raund):
     learn = Learning()
-    if viber_request.message.text == users_base[user1].current_word_rus:
+    word = DataRaund.get_word(user1)
+    translate = Words.get_true_translate(word)
+
+    num_question = DataRaund.get_one_answer(user1)[0]
+    num_correct_answer = DataRaund.get_one_answer()[1]
+    num_incorrect_answers = DataRaund.get_one_answer()[2]
+
+    if viber_request.message.text == translate:
         # Правильный ответ
-        users_base[user1].num_correct_answers += 1
+        num_correct_answer += 1
         count_ok_answer = learn.set_learning(user1, viber_request.message.text, 1)
         # Отправка сообщения
         message = f"Ответ правильный. Количество правильных ответов на данное слово: {count_ok_answer}"
@@ -258,7 +244,7 @@ def check_answer(viber_request, user1):
 
     else:
         # Неправильный ответ
-        users_base[user1].num_incorrect_answers += 1
+        num_incorrect_answers += 1
 
         learn.reset_true_answer(user1, viber_request.message.text)
         count_ok_answer = learn.set_learning(user1, viber_request.message.text, 0)
@@ -267,14 +253,14 @@ def check_answer(viber_request, user1):
         viber.send_messages(user1, [
             TextMessage(text=message)
         ])
-
+    raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
     user.set_last_time_answer(user1)
 
 
 # Отправка сообщения с результатами
 def send_result_message(user1):
-    count_correct = users_base[user1].num_correct_answers
-    count_incorrect = users_base[user1].num_incorrect_answers
+    count_correct = DataRaund.get_one_answer(user1)[1]
+    count_incorrect = DataRaund.get_one_answer(user1)[2]
 
     # Сообщение
     message = f"Результат раунда. Правильных слов: {count_correct}, неверных ответов: {count_incorrect}"

@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 import json
+import random
 
 # Декларативный базовый класс
 Base = declarative_base()
@@ -55,6 +56,17 @@ class Users(Base):
                 session.rollback()
                 session.close()
 
+        # Добавление данных раунда к новому юзеру
+        raund = DataRaund(user_id=user_id,
+                          word=None,
+                          num_question=0,
+                          num_correct_answer=0,
+                          num_incorrect_answers=0)
+        session = Session()
+        session.add(raund)
+        session.commit()
+        session.close()
+
     # Поиск покупателя в БД
     def find_user(self, user_id):
         try:
@@ -85,7 +97,7 @@ class Users(Base):
         data_user.append(time_value[0])
 
         # Получаем количество выученных слов
-        count_ans = int(Settings.get_cuunt_true_answer())
+        count_ans = int(Settings.get_count_true_answer())
         session = Session()
         learned_value = session.query(Learning.word).filter(Learning.user == user_id).filter(
             Learning.count_correct_answer > count_ans).count()
@@ -179,6 +191,28 @@ class Words(Base):
     word_id = Column(String, primary_key=True)
     translate = Column(String)
 
+    @staticmethod
+    def get_one_random_word():
+        session = Session()
+        select_query = session.query(Words.word_id).all()
+        session.close()
+        random_word = select_query[random.randint(0, len(select_query) - 1)][0]
+        return random_word
+
+    @staticmethod
+    def get_false_translates(word):
+        session = Session()
+        select_query = session.query(Words.translate).filter(Words.word_id != word).all()
+        session.close()
+        return select_query
+
+    @staticmethod
+    def get_true_translate(word):
+        session = Session()
+        select_query = session.query(Words.translate).filter(Words.word_id == word).one()
+        session.close()
+        return select_query[0]
+
 
 # Таблица примеров
 class Examples(Base):
@@ -186,6 +220,13 @@ class Examples(Base):
     id = Column(Integer, primary_key=True)
     word = Column(String, ForeignKey('words.word_id'), nullable=False)
     example = Column(String)
+
+    @staticmethod
+    def get_example(word):
+        session = Session()
+        select_query = session.query(Examples.example).filter(Examples.word == word).all()
+        session.close()
+        return select_query
 
 
 # Таблица настроек бота
@@ -195,6 +236,20 @@ class Settings(Base):
     clock_time = Column(Integer, nullable=False)
     count_word_raund = Column(Integer, nullable=False)
     cuunt_true_answer = Column(Integer, nullable=False)
+
+    # Изменение настроек
+    def edit_settings(self, ct, cwr, cta):
+        try:
+            session = Session()
+            update_setting = session.query(Settings).one()
+            update_setting.clock_time = ct
+            update_setting.count_word_raund = cwr
+            update_setting.cuunt_true_answer = cta
+            session.commit()
+            session.close()
+        except:
+            session.rollback()
+            session.close()
 
     @staticmethod
     def get_clock_time():
@@ -214,25 +269,46 @@ class Settings(Base):
         return select_q[0]
 
     @staticmethod
-    def get_cuunt_true_answer():
+    def get_count_true_answer():
         session = Session()
         select_q = session.query(Settings.cuunt_true_answer).one()
         session.close()
         return select_q[0]
 
-    # Изменение настроек
-    def edit_settings(self, ct, cwr, cta):
-        try:
-            session = Session()
-            update_setting = session.query(Settings).one()
-            update_setting.clock_time = ct
-            update_setting.count_word_raund = cwr
-            update_setting.cuunt_true_answer = cta
-            session.commit()
-            session.close()
-        except:
-            session.rollback()
-            session.close()
+# Таблица для данных раунда
+class DataRaund:
+    __tablename__ = 'dataraund'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, ForeignKey('users.user_id'), nullable=False)
+    word = Column(String, ForeignKey('words.word_id'), nullable=False)
+    num_question = Column(Integer)
+    num_correct_answer = Column(Integer)
+    num_incorrect_answers = Column(Integer)
+
+    def set_one_answer(self, user_id, word, nq, nca, nia):
+        session = Session()
+        update_query = session.query(DataRaund).filter(DataRaund.user_id == user_id).one()
+        DataRaund.word = word
+        DataRaund.num_question = nq
+        DataRaund.num_correct_answer = nca
+        DataRaund.num_incorrect_answers = nia
+        session.commit()
+        session.close()
+
+    @staticmethod
+    def get_word(user_id):
+        session = Session()
+        select_query = session.query(DataRaund.word).filter(DataRaund.user_id == user_id).one()
+        session.close()
+        return select_query[0]
+
+    @staticmethod
+    def get_one_answer(user_id):
+        session = Session()
+        select_query = session.query(DataRaund.num_question, DataRaund.num_correct_answer, DataRaund.num_incorrect_answers).filter(DataRaund.user_id == user_id).one()
+        session.close()
+        return select_query
+
 
 
 # Дефолтные настройки
