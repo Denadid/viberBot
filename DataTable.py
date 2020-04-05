@@ -275,8 +275,9 @@ class Settings(Base):
         session.close()
         return select_q[0]
 
+
 # Таблица для данных раунда
-class DataRaund:
+class DataRaund(Base):
     __tablename__ = 'dataraund'
     id = Column(Integer, primary_key=True)
     user_id = Column(String, ForeignKey('users.user_id'), nullable=False)
