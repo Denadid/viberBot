@@ -281,7 +281,7 @@ class DataRaund(Base):
     __tablename__ = 'dataraund'
     id = Column(Integer, primary_key=True)
     user_id = Column(String, ForeignKey('users.user_id'), nullable=False)
-    word = Column(String, ForeignKey('words.word_id'), nullable=False)
+    word = Column(String, ForeignKey('words.word_id'))
     num_question = Column(Integer)
     num_correct_answer = Column(Integer)
     num_incorrect_answers = Column(Integer)
