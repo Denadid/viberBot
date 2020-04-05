@@ -163,8 +163,8 @@ def show_round_area(user1, raund):
     # Сохранения новых параметров пользователя
     num_question = DataRaund.get_one_answer(user1)[0]
     num_question += 1
-    num_correct_answer = DataRaund.get_one_answer()[1]
-    num_incorrect_answers = DataRaund.get_one_answer()[2]
+    num_correct_answer = DataRaund.get_one_answer(user1)[1]
+    num_incorrect_answers = DataRaund.get_one_answer(user1)[2]
     raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
 
 
@@ -186,7 +186,7 @@ def send_example_message(user1):
 # Отправка сообщения с вопросом
 def send_question_message(user1, word):
     # Формирование ответного сообщения
-    count_question = DataRaund.get_one_answer()[0]
+    count_question = DataRaund.get_one_answer(user1)[0]
     message = f"{count_question + 1}. Как переводится с английского слово [{word}]?"
     # Отправка сообщения
     viber.send_messages(user1, [
@@ -229,8 +229,8 @@ def check_answer(viber_request, user1, raund):
     translate = Words.get_true_translate(word)
 
     num_question = DataRaund.get_one_answer(user1)[0]
-    num_correct_answer = DataRaund.get_one_answer()[1]
-    num_incorrect_answers = DataRaund.get_one_answer()[2]
+    num_correct_answer = DataRaund.get_one_answer(user1)[1]
+    num_incorrect_answers = DataRaund.get_one_answer(user1)[2]
 
     if viber_request.message.text == translate:
         # Правильный ответ
