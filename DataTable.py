@@ -57,12 +57,12 @@ class Users(Base):
                 session.close()
 
         # Добавление данных раунда к новому юзеру
+        session = Session()
         raund = DataRaund(user_id=user_id,
                           word=None,
                           num_question=0,
                           num_correct_answer=0,
                           num_incorrect_answers=0)
-        session = Session()
         session.add(raund)
         session.commit()
         session.close()
