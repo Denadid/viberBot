@@ -289,10 +289,10 @@ class DataRaund(Base):
     def set_one_answer(self, user_id, word, nq, nca, nia):
         session = Session()
         update_query = session.query(DataRaund).filter(DataRaund.user_id == user_id).one()
-        DataRaund.word = word
-        DataRaund.num_question = nq
-        DataRaund.num_correct_answer = nca
-        DataRaund.num_incorrect_answers = nia
+        update_query.word = word
+        update_query.num_question = nq
+        update_query.num_correct_answer = nca
+        update_query.num_incorrect_answers = nia
         session.commit()
         session.close()
 
