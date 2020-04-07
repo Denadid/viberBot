@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 import json
 import random
+import sqlite3
 
 # Декларативный базовый класс
 Base = declarative_base()
@@ -12,6 +13,7 @@ Base = declarative_base()
 engine = create_engine(
     'postgres://waactudsnfbwxu:e73f01ad438e68683523415d9317065e7e3995a036d26451c6fe166b186cc775@ec2-54-75-231-215.eu-west-1.compute.amazonaws.com:5432/d6cpom1s22furu',
     echo=True)
+#engine = create_engine('sqlite:///database.db', echo=True)
 metadata = MetaData()
 
 # Сессия
@@ -311,6 +313,36 @@ class DataRaund(Base):
         return select_query
 
 
+# Таблица для хранения токенов сообщений
+class MessageInfo(Base):
+    __tablename__ = 'messageinfo'
+    user_id = Column(String, primary_key=True)
+    token_message = Column(String)
+
+    def add_record(self, user, token):
+        session = Session()
+        record = MessageInfo(user_id=user,
+                             token_message=token)
+        session.add(record)
+        session.commit()
+        session.close()
+
+    def set_token_message(self, user, token):
+        session = Session()
+        insert_query = session.query(MessageInfo).filter(MessageInfo.user_id == user).one()
+        insert_query.token_message = token
+        session.commit()
+        session.close()
+
+    @staticmethod
+    def get_token_message(user):
+        try:
+            session = Session()
+            select_query = session.query(MessageInfo.token_message).filter(MessageInfo.user_id == user).one()
+            session.close()
+            return select_query[0]
+        except:
+            return -1
 
 # Дефолтные настройки
 def default_settings():
@@ -322,6 +354,8 @@ def default_settings():
     session.commit()
     session.close()
 
+
+# Занесение всех слов и прмеров в таблицы
 def input_data():
     # Разбор файла "english_words" на элементы. При инициализации flask-приложения
     with open("english_words.json", "r", encoding="utf-8") as read_file:

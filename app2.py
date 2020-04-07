@@ -8,7 +8,8 @@ from Setting import TOKEN
 from OtherSettings import start_keyboard, round_keyboard, clock_keyboard
 import json
 import random
-from DataTable import Users, Learning, Words, Examples, Base, engine, input_data, default_settings, Settings, DataRaund
+from DataTable import Users, Learning, Words, Examples, Base, engine, input_data, default_settings, Settings, DataRaund, \
+    MessageInfo
 from datetime import datetime
 
 app = Flask(__name__)
@@ -22,6 +23,7 @@ viber = Api(BotConfiguration(
 
 user = Users()
 
+
 # Обработка приходящих запросов
 @app.route('/incoming', methods=['POST'])
 def incoming():
@@ -30,7 +32,6 @@ def incoming():
         default_settings()
     # Входящий запрос
     viber_request = viber.parse_request(request.get_data())
-
     # Обработка входящего запроса
     parsing_request(viber_request)
 
@@ -70,6 +71,9 @@ def parsing_request(viber_request):
             user.add_user(viber_request.user.id, viber_request.user.name)
         user_id = user.find_user(viber_request.user.id)
 
+        msginf = MessageInfo()
+        msginf.add_record(user_id, viber_request.message_token)
+
         # Вывод стартового окна
         show_start_area(viber_request, user_id)
 
@@ -77,53 +81,62 @@ def parsing_request(viber_request):
     if isinstance(viber_request, ViberMessageRequest):
         user_id = user.find_user(viber_request.sender.id)
         raund = DataRaund()
-        # Обработка команды "start": запуск нового раунда
-        message = viber_request.message.text
-        if message == "start":
-            # Вывод "второго" окна
-            show_round_area(user_id, raund)
-            return
 
-        if message == "remiend":
-            user.set_last_time_answer(user_id)
-            # Сообщение
-            message = f"Напомню через 30 минут!"
+        # Проверка на возможность повторного отправления сообщения
+        if viber_request.event_type == 'message':
+            if MessageInfo.get_token_message(user_id) != -1:
+                if viber_request.message_token != MessageInfo.get_token_message(user_id):
+                    msginf = MessageInfo()
+                    msginf.set_token_message(user_id, viber_request.message_token)
+                    message = viber_request.message.text
 
-            # Отправка сообщения
-            viber.send_messages(user_id, [
-                TextMessage(text=message)
-            ])
-            return
+                    # Обработка команды "start": запуск нового раунда
+                    if message == "start":
+                        # Вывод "второго" окна
+                        show_round_area(user_id, raund)
+                        return
 
-        if message == "inputdata":
-            input_data()
-            return
+                    if message == "remiend":
+                        user.set_last_time_answer(user_id)
+                        # Сообщение
+                        message = f"Напомню через 30 минут!"
 
-        # Продолжение уже начатого раунда, если раунд не закончился
-        total_count_raund = int(Settings.get_count_word_raund())  # Общее количество раундов (по условию)
+                        # Отправка сообщения
+                        viber.send_messages(user_id, [
+                            TextMessage(text=message)
+                        ])
+                        return
 
-        # Обработка команды "show_example": вывод примера употребления слова
-        if viber_request.message.text == "show_example":
-            send_example_message(user_id)
-        else:  # Если пользователь не запросил вывода примера и выбрал слово
-            # Проверка на правильность ответа
-            check_answer(viber_request, user_id, raund)
+                    if message == "inputdata":
+                        input_data()
+                        return
 
-        num_question = DataRaund.get_one_answer(user_id)[0]
+                    # Продолжение уже начатого раунда, если раунд не закончился
+                    total_count_raund = int(Settings.get_count_word_raund())  # Общее количество раундов (по условию)
 
-        if num_question < total_count_raund:
-            # Продолжение раунда
-            show_round_area(user_id, raund)
-        else:  # При ответе на 10 вопросв - закончить раунд
-            # Вывод результата раунда
-            send_result_message(user_id)
+                    # Обработка команды "show_example": вывод примера употребления слова
+                    if viber_request.message.text == "show_example":
+                        send_example_message(user_id)
+                    else:  # Если пользователь не запросил вывода примера и выбрал слово
+                        # Проверка на правильность ответа
+                        check_answer(viber_request, user_id, raund)
 
-            # Сброс данных пользователя
-            num_question = 0
-            raund.set_one_answer(user_id, None, num_question, 0, 0)
+                    num_question = DataRaund.get_one_answer(user_id)[0]
 
-            # Вывод стартового окна
-            show_start_area(viber_request, user_id)
+                    if num_question < total_count_raund:
+                        # Продолжение раунда
+                        show_round_area(user_id, raund)
+                    else:  # При ответе на 10 вопросв - закончить раунд
+                        # Вывод результата раунда
+                        send_result_message(user_id)
+
+                        # Сброс данных пользователя
+                        num_question = 0
+                        raund.set_one_answer(user_id, None, num_question, 0, 0)
+
+                        # Вывод стартового окна
+                        show_start_area(viber_request, user_id)
+
 
 
 # Отправка первого "экрана" (приветственного сообщения)
