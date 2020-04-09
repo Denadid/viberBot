@@ -58,16 +58,19 @@ def incoming():
                         msginf.set_token_message(user_id, viber_request.message_token)
                         message = viber_request.message.text
                         if viber_request.message.text[0:len_count_raund].isdigit():
+                            if Users.get_new_num_question(user_id) != Users.get_old_num_question(user_id):
+                                user.set_count_press(user_id, DataRaund.get_one_answer(user_id)[0], viber_request.message.text[0:len_count_raund])
                             value = Users.get_count_press(user_id)
+                            print('*********DOvalue: ', value)
                             value += 1
-                            user.set_count_press(user_id, value)
+                            user.set_count_press(user_id, value, viber_request.message.text[0:len_count_raund])
                             print('*********viber_request.message.text: ', viber_request.message.text)
-                            print('*********value: ', value)
+                            print('*********POSLEvalue: ', value)
                             if viber_request.message.text[0:len_count_raund] == str(value - 1):
                                 # Обработка входящего запроса
+                                print('************Zashel v if*********')
                                 parsing_request(viber_request)
-                                print('*********DataRaund.get_one_answer(user_id)[0] - 1: ', DataRaund.get_one_answer(user_id)[0] - 1)
-                                user.set_count_press(user_id, DataRaund.get_one_answer(user_id)[0]-1)
+                                print('*********DataRaund.get_one_answer(user_id)[0]: ', DataRaund.get_one_answer(user_id)[0])
                         else:
                             # Обработка входящего запроса
                             parsing_request(viber_request)
@@ -111,7 +114,7 @@ def parsing_request(viber_request):
 
         # Сброс страых данных
         raund.set_one_answer(user_id, None, 0, 0, 0)
-        user.set_count_press(user_id, 0)
+        user.set_count_press(user_id, 0, 0)
 
         # Вывод стартового окна
         show_start_area(viber_request, user_id)
@@ -152,7 +155,7 @@ def parsing_request(viber_request):
         else:
             # Проверка на правильность ответа
             check_answer(viber_request, user_id, raund)
-        if num_question < total_count_raund:
+        if num_question != total_count_raund:
             # Продолжение раунда
             show_round_area(user_id, raund)
         else:  # При ответе на 10 вопросв - закончить раунд
@@ -194,19 +197,13 @@ def show_start_area(viber_request, userID):
 def show_round_area(user1, raund):
     # Рандомное слово для изучения
     word = Words.get_one_random_word()
-
-    num_question = DataRaund.get_one_answer(user1)[0]
+    dt_raund = DataRaund.get_one_answer(user1)
+    raund.set_one_answer(user1, word, dt_raund[0], dt_raund[1], dt_raund[2])
     # Расстановка кнопок на клавиатуре
     set_round_keyboard(word, user1)
 
     # Отправка сообщения с вопросом
     send_question_message(user1, word)
-
-    # Сохранения новых параметров пользователя
-    num_question += 1
-    num_correct_answer = DataRaund.get_one_answer(user1)[1]
-    num_incorrect_answers = DataRaund.get_one_answer(user1)[2]
-    raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
 
 
 # Показать пример использования слова пользователю
@@ -295,7 +292,8 @@ def check_answer(viber_request, user1, raund):
         viber.send_messages(user1, [
             TextMessage(text=message)
         ])
-
+    # Сохранения новых параметров пользователя
+    num_question += 1
     raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
     user.set_last_time_answer(user1)
 

@@ -27,6 +27,8 @@ class Users(Base):
     last_time = Column(DateTime)
     name = Column(String)
     count_answer = Column(Integer)
+    new_num_question = Column(Integer)
+    old_num_question = Column(Integer)
 
     # Добавление нового пользователя в БД
     def add_user(self, user_id, user_name):
@@ -34,7 +36,9 @@ class Users(Base):
         new_user = Users(user_id=user_id,
                          name=user_name,
                          last_time=None,
-                         count_answer=0)
+                         count_answer=0,
+                         new_num_question=0,
+                         old_num_question=0)
 
         # Добавление нового юзера
         session.add(new_user)
@@ -91,12 +95,18 @@ class Users(Base):
         except:
             return -1
 
-    def set_count_press(self, user_id, value):
+    def set_count_press(self, user_id, value, num_question):
         session = Session()
-        update_name_user = session.query(Users).filter(Users.user_id == user_id).one()
-        update_name_user.count_answer = value
-        session.commit()
-        session.close()
+        try:
+            update_name_user = session.query(Users).filter(Users.user_id == user_id).one()
+            update_name_user.old_num_question = update_name_user.new_num_question
+            update_name_user.new_num_question = num_question
+            update_name_user.count_answer = value
+            session.commit()
+            session.close()
+        except:
+            session.rollback()
+            session.close()
 
     @staticmethod
     def get_count_press(user_id):
@@ -107,6 +117,20 @@ class Users(Base):
             return select_query[0]
         except:
             return -1
+
+    @staticmethod
+    def get_new_num_question(user_id):
+        session = Session()
+        select_query = session.query(Users.new_num_question).filter(Users.user_id == user_id).one()
+        session.close()
+        return select_query[0]
+
+    @staticmethod
+    def get_old_num_question(user_id):
+        session = Session()
+        select_query = session.query(Users.old_num_question).filter(Users.user_id == user_id).one()
+        session.close()
+        return select_query[0]
 
     # Плучение данных о данном пользователе
     def get_data_user(self, user_id):
