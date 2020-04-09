@@ -413,7 +413,7 @@ def default_settings():
     session = Session()
     setting = Settings(clock_time=3,
                        count_word_raund=5,
-                       cuunt_true_answer=20)
+                       count_true_answer=20)
     session.add(setting)
     session.commit()
     session.close()
