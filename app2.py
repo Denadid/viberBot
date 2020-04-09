@@ -198,7 +198,7 @@ def show_start_area(viber_request, userID):
 def show_round_area(user1, raund):
     # Рандомное слово для изучения
     word = ''
-    if DataRaund.this_example(user1) == 0:
+    if DataRaund.get_this_example(user1) == 0:
         word = Words.get_one_random_word()
     else:
         word = DataRaund.get_word(user1)
