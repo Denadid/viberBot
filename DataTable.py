@@ -256,7 +256,6 @@ class Words(Base):
 
     @staticmethod
     def get_true_translate(word):
-        count_true_answer = Settings.get_count_true_answer()
         session = Session()
         select_query = session.query(Words.translate).filter(Words.word_id == word).one()
         session.close()

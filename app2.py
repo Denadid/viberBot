@@ -131,7 +131,7 @@ def parsing_request(viber_request):
         if message == "remiend":
             user.set_last_time_answer(user_id)
             # Сообщение
-            message = f"Напомню через 30 минут!"
+            message = f"Напомню через {Settings.get_clock_time()} минут!"
 
             # Отправка сообщения
             viber.send_messages(user_id, [
@@ -200,6 +200,7 @@ def show_round_area(user1, raund):
         word = Words.get_one_random_word()
     else:
         word = DataRaund.get_word(user1)
+    print('*************************************', word)
     dt_raund = DataRaund.get_one_answer(user1)
     raund.set_one_answer(user1, word, dt_raund[0], dt_raund[1], dt_raund[2])
     # Расстановка кнопок на клавиатуре
