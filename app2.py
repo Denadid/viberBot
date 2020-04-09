@@ -32,8 +32,45 @@ def incoming():
         default_settings()
     # Входящий запрос
     viber_request = viber.parse_request(request.get_data())
-    # Обработка входящего запроса
-    parsing_request(viber_request)
+    user_id = ''
+    # Добавление нового пользователя
+    if isinstance(viber_request, ViberConversationStartedRequest):
+        if user.find_user(viber_request.user.id) == -1:
+            user.add_user(viber_request.user.id, viber_request.user.name)
+        user_id = user.find_user(viber_request.user.id)
+        # Обработка входящего запроса
+        parsing_request(viber_request)
+    if isinstance(viber_request, ViberMessageRequest):
+        user_id = user.find_user(viber_request.sender.id)
+
+        count = user.get_count_press(user_id)
+
+        if count == -1:
+            # Обработка входящего запроса
+            parsing_request(viber_request)
+        else:
+            len_count_raund = len(str(DataRaund.get_one_answer(user_id)[0]))
+            # Проверка на возможность повторного отправления сообщения
+            if viber_request.event_type == 'message':
+                if MessageInfo.get_token_message(user_id) != -1:
+                    if str(viber_request.message_token) != MessageInfo.get_token_message(user_id):
+                        msginf = MessageInfo()
+                        msginf.set_token_message(user_id, viber_request.message_token)
+                        message = viber_request.message.text
+                        if viber_request.message.text[0:len_count_raund].isdigit():
+                            value = Users.get_count_press(user_id)
+                            value += 1
+                            user.set_count_press(user_id, value)
+                            print('*********viber_request.message.text: ', viber_request.message.text)
+                            print('*********value: ', value)
+                            if viber_request.message.text[0:len_count_raund] == str(value - 1):
+                                # Обработка входящего запроса
+                                parsing_request(viber_request)
+                                print('*********DataRaund.get_one_answer(user_id)[0] - 1: ', DataRaund.get_one_answer(user_id)[0] - 1)
+                                user.set_count_press(user_id, DataRaund.get_one_answer(user_id)[0]-1)
+                        else:
+                            # Обработка входящего запроса
+                            parsing_request(viber_request)
 
     # Успешно обработанный запрос
     return Response(status=200)
@@ -64,15 +101,17 @@ def result_settings():
 
 # Обработка запроса от пользователя
 def parsing_request(viber_request):
+    raund = DataRaund()
     # Действия для новых пользователей
     if isinstance(viber_request, ViberConversationStartedRequest):
-        # Добавление нового пользователя
-        if user.find_user(viber_request.user.id) == -1:
-            user.add_user(viber_request.user.id, viber_request.user.name)
         user_id = user.find_user(viber_request.user.id)
+        if MessageInfo.get_token_message(user_id) == -1:
+            msginf = MessageInfo()
+            msginf.add_record(user_id, viber_request.message_token)
 
-        msginf = MessageInfo()
-        msginf.add_record(user_id, viber_request.message_token)
+        # Сброс страых данных
+        raund.set_one_answer(user_id, None, 0, 0, 0)
+        user.set_count_press(user_id, 0)
 
         # Вывод стартового окна
         show_start_area(viber_request, user_id)
@@ -80,63 +119,53 @@ def parsing_request(viber_request):
     # Действия для пользователей из базы (уже подписавшихся)
     if isinstance(viber_request, ViberMessageRequest):
         user_id = user.find_user(viber_request.sender.id)
-        raund = DataRaund()
+        message = viber_request.message.text
 
-        # Проверка на возможность повторного отправления сообщения
-        if viber_request.event_type == 'message':
-            if MessageInfo.get_token_message(user_id) != -1:
-                if viber_request.message_token != MessageInfo.get_token_message(user_id):
-                    msginf = MessageInfo()
-                    msginf.set_token_message(user_id, viber_request.message_token)
-                    message = viber_request.message.text
+        # Обработка команды "start": запуск нового раунда
+        if message == "start":
+            # Вывод "второго" окна
+            show_round_area(user_id, raund)
+            return
 
-                    # Обработка команды "start": запуск нового раунда
-                    if message == "start":
-                        # Вывод "второго" окна
-                        show_round_area(user_id, raund)
-                        return
+        if message == "remiend":
+            user.set_last_time_answer(user_id)
+            # Сообщение
+            message = f"Напомню через 30 минут!"
 
-                    if message == "remiend":
-                        user.set_last_time_answer(user_id)
-                        # Сообщение
-                        message = f"Напомню через 30 минут!"
+            # Отправка сообщения
+            viber.send_messages(user_id, [
+                TextMessage(text=message)
+            ])
+            return
 
-                        # Отправка сообщения
-                        viber.send_messages(user_id, [
-                            TextMessage(text=message)
-                        ])
-                        return
+        if message == "inputdata":
+            input_data()
+            return
 
-                    if message == "inputdata":
-                        input_data()
-                        return
+        # Продолжение уже начатого раунда, если раунд не закончился
+        total_count_raund = int(Settings.get_count_word_raund())  # Общее количество раундов (по условию)
+        num_question = DataRaund.get_one_answer(user_id)[0]
+        # Обработка команды "show_example": вывод примера употребления слова
+        if viber_request.message.text == "show_example":
+            send_example_message(user_id)
+            # Если пользователь не запросил вывода примера и выбрал слово
+        else:
+            # Проверка на правильность ответа
+            check_answer(viber_request, user_id, raund)
+        if num_question < total_count_raund:
+            # Продолжение раунда
+            show_round_area(user_id, raund)
+        else:  # При ответе на 10 вопросв - закончить раунд
+            # Вывод результата раунда
+            send_result_message(user_id)
 
-                    # Продолжение уже начатого раунда, если раунд не закончился
-                    total_count_raund = int(Settings.get_count_word_raund())  # Общее количество раундов (по условию)
+            # Сброс данных пользователя
+            user.count_press(user_id, 0, 1)
+            num_question = 0
+            raund.set_one_answer(user_id, None, num_question, 0, 0)
 
-                    # Обработка команды "show_example": вывод примера употребления слова
-                    if viber_request.message.text == "show_example":
-                        send_example_message(user_id)
-                    else:  # Если пользователь не запросил вывода примера и выбрал слово
-                        # Проверка на правильность ответа
-                        check_answer(viber_request, user_id, raund)
-
-                    num_question = DataRaund.get_one_answer(user_id)[0]
-
-                    if num_question < total_count_raund:
-                        # Продолжение раунда
-                        show_round_area(user_id, raund)
-                    else:  # При ответе на 10 вопросв - закончить раунд
-                        # Вывод результата раунда
-                        send_result_message(user_id)
-
-                        # Сброс данных пользователя
-                        num_question = 0
-                        raund.set_one_answer(user_id, None, num_question, 0, 0)
-
-                        # Вывод стартового окна
-                        show_start_area(viber_request, user_id)
-
+            # Вывод стартового окна
+            show_start_area(viber_request, user_id)
 
 
 # Отправка первого "экрана" (приветственного сообщения)
@@ -153,7 +182,6 @@ def show_start_area(viber_request, userID):
         message = "Приветствую вас, " + user_name + "!\n" + f"Время последнего прохождения опроса: {data_us[0]}" + ".\n" + \
                   f" Количество выученных слов: {data_us[1]}" + f". Количесвто слов, которые находятся в процессе " \
                                                                 f"заучивания: {data_us[2]}" + ". "
-
     # Отправка сообщения
     viber.send_messages(userID, [
         TextMessage(text=message,
@@ -167,14 +195,14 @@ def show_round_area(user1, raund):
     # Рандомное слово для изучения
     word = Words.get_one_random_word()
 
+    num_question = DataRaund.get_one_answer(user1)[0]
     # Расстановка кнопок на клавиатуре
-    set_round_keyboard(word)
+    set_round_keyboard(word, user1)
 
     # Отправка сообщения с вопросом
     send_question_message(user1, word)
 
     # Сохранения новых параметров пользователя
-    num_question = DataRaund.get_one_answer(user1)[0]
     num_question += 1
     num_correct_answer = DataRaund.get_one_answer(user1)[1]
     num_incorrect_answers = DataRaund.get_one_answer(user1)[2]
@@ -201,6 +229,7 @@ def send_question_message(user1, word):
     # Формирование ответного сообщения
     count_question = DataRaund.get_one_answer(user1)[0]
     message = f"{count_question + 1}. Как переводится с английского слово [{word}]?"
+
     # Отправка сообщения
     viber.send_messages(user1, [
         TextMessage(text=message,
@@ -210,29 +239,28 @@ def send_question_message(user1, word):
 
 
 # Динамическая настройка клавиатуры
-def set_round_keyboard(word):
+def set_round_keyboard(word, user):
     # Случайная последовательность неправильных слов
     false_words = Words.get_false_translates(word)
     f_words = random.sample(false_words, 3)
     # Правильное слово
     correct_word = Words.get_true_translate(word)
-
+    num_question = DataRaund.get_one_answer(user)[0]
     # Случайная последовательность для нумерации кнопок
     rand_list = random.sample([0, 1, 2, 3], 4)
-
     # Установка правильного ответа на случайную кнопку
     round_keyboard["Buttons"][rand_list[0]]["Text"] = correct_word
-    round_keyboard["Buttons"][rand_list[0]]["ActionBody"] = correct_word
+    round_keyboard["Buttons"][rand_list[0]]["ActionBody"] = str(num_question) + correct_word
 
     # Расстановка неправильных слов на случайную кнопку
     round_keyboard["Buttons"][rand_list[1]]["Text"] = f_words[0][0]
-    round_keyboard["Buttons"][rand_list[1]]["ActionBody"] = f_words[0][0]
+    round_keyboard["Buttons"][rand_list[1]]["ActionBody"] = str(num_question) + f_words[0][0]
 
     round_keyboard["Buttons"][rand_list[2]]["Text"] = f_words[1][0]
-    round_keyboard["Buttons"][rand_list[2]]["ActionBody"] = f_words[1][0]
+    round_keyboard["Buttons"][rand_list[2]]["ActionBody"] = str(num_question) + f_words[1][0]
 
     round_keyboard["Buttons"][rand_list[3]]["Text"] = f_words[2][0]
-    round_keyboard["Buttons"][rand_list[3]]["ActionBody"] = f_words[2][0]
+    round_keyboard["Buttons"][rand_list[3]]["ActionBody"] = str(num_question) + f_words[2][0]
 
 
 # Проверка ответа на правильность
@@ -244,11 +272,12 @@ def check_answer(viber_request, user1, raund):
     num_question = DataRaund.get_one_answer(user1)[0]
     num_correct_answer = DataRaund.get_one_answer(user1)[1]
     num_incorrect_answers = DataRaund.get_one_answer(user1)[2]
+    len_count_raund = len(str(num_question))
 
-    if viber_request.message.text == translate:
+    if viber_request.message.text[len_count_raund:] == translate:
         # Правильный ответ
         num_correct_answer += 1
-        count_ok_answer = learn.set_learning(user1, viber_request.message.text, 1)
+        count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 1)
         # Отправка сообщения
         message = f"Ответ правильный. Количество правильных ответов на данное слово: {count_ok_answer}"
         viber.send_messages(user1, [
@@ -260,12 +289,13 @@ def check_answer(viber_request, user1, raund):
         num_incorrect_answers += 1
 
         learn.reset_true_answer(user1, viber_request.message.text)
-        count_ok_answer = learn.set_learning(user1, viber_request.message.text, 0)
+        count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 0)
         # Отправка сообщения
         message = f"Ответ неправильный. Количество правильных ответов на данное слово: {count_ok_answer}"
         viber.send_messages(user1, [
             TextMessage(text=message)
         ])
+
     raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
     user.set_last_time_answer(user1)
 
@@ -287,7 +317,7 @@ def send_result_message(user1):
 def clock_message(user):
     # Сообщение
     message = f"Прошло 30 минут с момента последнего прохождения теста!" \
-              f" Пройдите заново, чтобы не забыдь ранее изученные слова!"
+              f" Пройдите заново, чтобы не забыть ранее изученные слова!"
 
     # Отправка сообщения
     viber.send_messages(user, [

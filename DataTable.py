@@ -26,13 +26,15 @@ class Users(Base):
     user_id = Column(String, primary_key=True)
     last_time = Column(DateTime)
     name = Column(String)
+    count_answer = Column(Integer)
 
     # Добавление нового пользователя в БД
     def add_user(self, user_id, user_name):
         session = Session()
         new_user = Users(user_id=user_id,
                          name=user_name,
-                         last_time=None)
+                         last_time=None,
+                         count_answer=0)
 
         # Добавление нового юзера
         session.add(new_user)
@@ -86,6 +88,23 @@ class Users(Base):
         session.close()
         try:
             return select_name_user[0]
+        except:
+            return -1
+
+    def set_count_press(self, user_id, value):
+        session = Session()
+        update_name_user = session.query(Users).filter(Users.user_id == user_id).one()
+        update_name_user.count_answer = value
+        session.commit()
+        session.close()
+
+    @staticmethod
+    def get_count_press(user_id):
+        session = Session()
+        select_query = session.query(Users.count_answer).filter(Users.user_id == user_id).one()
+        session.close()
+        try:
+            return select_query[0]
         except:
             return -1
 
@@ -308,7 +327,8 @@ class DataRaund(Base):
     @staticmethod
     def get_one_answer(user_id):
         session = Session()
-        select_query = session.query(DataRaund.num_question, DataRaund.num_correct_answer, DataRaund.num_incorrect_answers).filter(DataRaund.user_id == user_id).one()
+        select_query = session.query(DataRaund.num_question, DataRaund.num_correct_answer,
+                                     DataRaund.num_incorrect_answers).filter(DataRaund.user_id == user_id).one()
         session.close()
         return select_query
 
@@ -343,6 +363,7 @@ class MessageInfo(Base):
             return select_query[0]
         except:
             return -1
+
 
 # Дефолтные настройки
 def default_settings():
@@ -386,4 +407,3 @@ def input_data():
             except:
                 session.rollback()
                 session.close()
-
