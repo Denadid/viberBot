@@ -70,7 +70,8 @@ class Users(Base):
                           word=None,
                           num_question=0,
                           num_correct_answer=0,
-                          num_incorrect_answers=0)
+                          num_incorrect_answers=0,
+                          this_example=0)
         session.add(raund)
         session.commit()
         session.close()
@@ -330,14 +331,22 @@ class DataRaund(Base):
     num_question = Column(Integer)
     num_correct_answer = Column(Integer)
     num_incorrect_answers = Column(Integer)
+    this_example = Column(Integer)
 
-    def set_one_answer(self, user_id, word, nq, nca, nia):
+    def set_one_answer(self, user_id, word, num_question, num_correct_answer, num_incorrect_answers):
         session = Session()
         update_query = session.query(DataRaund).filter(DataRaund.user_id == user_id).one()
         update_query.word = word
-        update_query.num_question = nq
-        update_query.num_correct_answer = nca
-        update_query.num_incorrect_answers = nia
+        update_query.num_question = num_question
+        update_query.num_correct_answer = num_correct_answer
+        update_query.num_incorrect_answers = num_incorrect_answers
+        session.commit()
+        session.close()
+
+    def example_or_not(self, user_id, example=0):
+        session = Session()
+        update_query = session.query(DataRaund).filter(DataRaund.user_id == user_id).one()
+        update_query.this_example = example
         session.commit()
         session.close()
 
@@ -355,6 +364,13 @@ class DataRaund(Base):
                                      DataRaund.num_incorrect_answers).filter(DataRaund.user_id == user_id).one()
         session.close()
         return select_query
+
+    @staticmethod
+    def get_this_example(user_id):
+        session = Session()
+        select_query = session.query(DataRaund.this_example).filter(DataRaund.user_id == user_id).one()
+        session.close()
+        return select_query[0]
 
 
 # Таблица для хранения токенов сообщений

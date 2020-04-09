@@ -150,6 +150,7 @@ def parsing_request(viber_request):
         num_question = DataRaund.get_one_answer(user_id)[0]
         # Обработка команды "show_example": вывод примера употребления слова
         if viber_request.message.text == "show_example":
+            raund.example_or_not(user_id, 1)
             send_example_message(user_id)
             # Если пользователь не запросил вывода примера и выбрал слово
         else:
@@ -163,7 +164,7 @@ def parsing_request(viber_request):
             send_result_message(user_id)
 
             # Сброс данных пользователя
-            user.count_press(user_id, 0, 1)
+            user.set_count_press(user_id, 0, 0)
             num_question = 0
             raund.set_one_answer(user_id, None, num_question, 0, 0)
 
@@ -196,7 +197,10 @@ def show_start_area(viber_request, userID):
 # Отправка "второго" экрана
 def show_round_area(user1, raund):
     # Рандомное слово для изучения
-    word = Words.get_one_random_word()
+    if DataRaund.this_example(user1) == 0:
+        word = Words.get_one_random_word()
+    else:
+        word = DataRaund.get_word(user1)
     dt_raund = DataRaund.get_one_answer(user1)
     raund.set_one_answer(user1, word, dt_raund[0], dt_raund[1], dt_raund[2])
     # Расстановка кнопок на клавиатуре
@@ -204,6 +208,7 @@ def show_round_area(user1, raund):
 
     # Отправка сообщения с вопросом
     send_question_message(user1, word)
+    raund.example_or_not(user1)
 
 
 # Показать пример использования слова пользователю
