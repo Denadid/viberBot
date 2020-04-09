@@ -59,18 +59,16 @@ def incoming():
                         message = viber_request.message.text
                         if viber_request.message.text[0:len_count_raund].isdigit():
                             if Users.get_new_num_question(user_id) != Users.get_old_num_question(user_id):
+
                                 user.set_count_press(user_id, DataRaund.get_one_answer(user_id)[0], viber_request.message.text[0:len_count_raund])
                             value = Users.get_count_press(user_id)
-                            print('*********DOvalue: ', value)
                             value += 1
                             user.set_count_press(user_id, value, viber_request.message.text[0:len_count_raund])
-                            print('*********viber_request.message.text: ', viber_request.message.text)
-                            print('*********POSLEvalue: ', value)
+
                             if viber_request.message.text[0:len_count_raund] == str(value - 1):
                                 # Обработка входящего запроса
-                                print('************Zashel v if*********')
                                 parsing_request(viber_request)
-                                print('*********DataRaund.get_one_answer(user_id)[0]: ', DataRaund.get_one_answer(user_id)[0])
+
                         else:
                             # Обработка входящего запроса
                             parsing_request(viber_request)

@@ -167,7 +167,7 @@ class Users(Base):
         session.commit()
         session.close()
 
-    def get_userd_id_last_time_in_30_min(self):
+    def reminder(self):
         session = Session()
         select_user = session.query(Users.user_id, Users.last_time).all()
         session.close()
