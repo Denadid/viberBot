@@ -156,7 +156,7 @@ def parsing_request(viber_request):
         else:
             # Проверка на правильность ответа
             check_answer(viber_request, user_id, raund)
-        if num_question <= total_count_raund:
+        if num_question < total_count_raund-1:
             # Продолжение раунда
             show_round_area(user_id, raund)
         else:  # При ответе на 10 вопросв - закончить раунд

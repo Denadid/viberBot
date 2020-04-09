@@ -240,7 +240,9 @@ class Words(Base):
     @staticmethod
     def get_one_random_word():
         session = Session()
-        select_query = session.query(Words.word_id).all()
+        count_true_answer = Settings.get_count_true_answer()
+        select_query = session.query(Words.word_id).filter(Words.word_id == Learning.word).filter(
+            Learning.count_correct_answer < count_true_answer).all()
         session.close()
         random_word = select_query[random.randint(0, len(select_query) - 1)][0]
         return random_word
@@ -254,6 +256,7 @@ class Words(Base):
 
     @staticmethod
     def get_true_translate(word):
+        count_true_answer = Settings.get_count_true_answer()
         session = Session()
         select_query = session.query(Words.translate).filter(Words.word_id == word).one()
         session.close()
@@ -281,7 +284,7 @@ class Settings(Base):
     id = Column(Integer, primary_key=True)
     clock_time = Column(Integer, nullable=False)
     count_word_raund = Column(Integer, nullable=False)
-    cuunt_true_answer = Column(Integer, nullable=False)
+    count_true_answer = Column(Integer, nullable=False)
 
     # Изменение настроек
     def edit_settings(self, ct, cwr, cta):
@@ -290,7 +293,7 @@ class Settings(Base):
             update_setting = session.query(Settings).one()
             update_setting.clock_time = ct
             update_setting.count_word_raund = cwr
-            update_setting.cuunt_true_answer = cta
+            update_setting.count_true_answer = cta
             session.commit()
             session.close()
         except:
@@ -317,7 +320,7 @@ class Settings(Base):
     @staticmethod
     def get_count_true_answer():
         session = Session()
-        select_q = session.query(Settings.cuunt_true_answer).one()
+        select_q = session.query(Settings.count_true_answer).one()
         session.close()
         return select_q[0]
 
