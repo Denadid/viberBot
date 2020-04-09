@@ -197,6 +197,7 @@ def show_start_area(viber_request, userID):
 # Отправка "второго" экрана
 def show_round_area(user1, raund):
     # Рандомное слово для изучения
+    word = ''
     if DataRaund.this_example(user1) == 0:
         word = Words.get_one_random_word()
     else:
