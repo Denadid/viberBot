@@ -113,6 +113,7 @@ def parsing_request(viber_request):
         # Сброс страых данных
         raund.set_one_answer(user_id, None, 0, 0, 0)
         user.set_count_press(user_id, 0, 0)
+        raund.example_or_not(user_id, 0)
 
         # Вывод стартового окна
         show_start_area(viber_request, user_id)
@@ -208,7 +209,7 @@ def show_round_area(user1, raund):
 
     # Отправка сообщения с вопросом
     send_question_message(user1, word)
-    raund.example_or_not(user1)
+    raund.example_or_not(user1, 0)
 
 
 # Показать пример использования слова пользователю
