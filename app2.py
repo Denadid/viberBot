@@ -128,7 +128,7 @@ def parsing_request(viber_request):
         # Обработка команды "start": запуск нового раунда
         if message == "start":
             # Вывод "второго" окна
-            show_round_area(user_id, raund)
+            show_round_area(user_id, raund, viber_request)
             return
 
         if message == "remiend":
@@ -159,7 +159,7 @@ def parsing_request(viber_request):
             check_answer(viber_request, user_id, raund)
         if num_question < total_count_raund:
             # Продолжение раунда
-            show_round_area(user_id, raund)
+            show_round_area(user_id, raund, viber_request)
         else:  # При ответе на 10 вопросв - закончить раунд
             # Вывод результата раунда
             send_result_message(user_id)
@@ -197,7 +197,7 @@ def show_start_area(viber_request, userID):
 
 
 # Отправка "второго" экрана
-def show_round_area(user1, raund):
+def show_round_area(user1, raund, viber_request):
     # Рандомное слово для изучения
     word = ''
     if DataRaund.get_this_example(user1) == 0:
@@ -212,11 +212,12 @@ def show_round_area(user1, raund):
     # Отправка сообщения с вопросом
     send_question_message(user1, word)
     num_question = dt_raund[0]
-    if DataRaund.get_this_example(user1) == 0:
-        num_question +=1
-        raund.set_one_answer(user1, word, num_question, dt_raund[1], dt_raund[2])
+    len_count_raund = len(str(num_question))
+    if viber_request.message.text[0:len_count_raund].isdigit():
+        num_question += 1
     else:
         raund.example_or_not(user1, 0)
+    raund.set_one_answer(user1, word, num_question, dt_raund[1], dt_raund[2])
 
 
 # Показать пример использования слова пользователю
@@ -283,27 +284,26 @@ def check_answer(viber_request, user1, raund):
     num_incorrect_answers = DataRaund.get_one_answer(user1)[2]
     len_count_raund = len(str(num_question))
 
-    if viber_request.message.text[0:len_count_raund].isdigit():
-        if viber_request.message.text[len_count_raund:] == translate:
-            # Правильный ответ
-            num_correct_answer += 1
-            count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 1)
-            # Отправка сообщения
-            message = f"Ответ правильный. Количество правильных ответов на данное слово: {count_ok_answer}"
-            viber.send_messages(user1, [
-                TextMessage(text=message)
-            ])
+    if viber_request.message.text[len_count_raund:] == translate:
+        # Правильный ответ
+        num_correct_answer += 1
+        count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 1)
+        # Отправка сообщения
+        message = f"Ответ правильный. Количество правильных ответов на данное слово: {count_ok_answer}"
+        viber.send_messages(user1, [
+            TextMessage(text=message)
+        ])
 
-        else:
-            # Неправильный ответ
-            num_incorrect_answers += 1
-            learn.reset_true_answer(user1, viber_request.message.text)
-            count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 0)
-            # Отправка сообщения
-            message = f"Ответ неправильный. Количество правильных ответов на данное слово: {count_ok_answer}"
-            viber.send_messages(user1, [
-                TextMessage(text=message)
-            ])
+    else:
+        # Неправильный ответ
+        num_incorrect_answers += 1
+        learn.reset_true_answer(user1, viber_request.message.text)
+        count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 0)
+        # Отправка сообщения
+        message = f"Ответ неправильный. Количество правильных ответов на данное слово: {count_ok_answer}"
+        viber.send_messages(user1, [
+            TextMessage(text=message)
+        ])
 
     # Сохранения новых параметров пользователя
     raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
