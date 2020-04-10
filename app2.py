@@ -86,7 +86,7 @@ def index():
 # URL-адрес для настроек бота
 @app.route('/settings')
 def settings():
-    return render_template('settings.html')
+    return render_template('settings.html', time=Settings.get_clock_time(), count_word_raund=Settings.get_count_word_raund(), count_true_answer=Settings.get_count_true_answer())
 
 
 # Получение значений настроек бота

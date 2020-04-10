@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DataTable.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataTable.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app2.py" beforeDir="false" afterPath="$PROJECT_DIR$/app2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/settings.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/settings.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,28 +135,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="temp (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="3" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../333" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../333/temp.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="temp" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="3" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -164,12 +143,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/.." />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../temp.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -181,7 +160,6 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.temp" />
-        <item itemvalue="Python.temp (1)" />
         <item itemvalue="Python.set_webhook" />
         <item itemvalue="Python.app2 (1)" />
       </list>
@@ -228,7 +206,8 @@
       <workItem from="1586328379091" duration="25698000" />
       <workItem from="1586410628305" duration="20573000" />
       <workItem from="1586441613377" duration="8082000" />
-      <workItem from="1586452000376" duration="11683000" />
+      <workItem from="1586452000376" duration="13432000" />
+      <workItem from="1586499494079" duration="807000" />
     </task>
     <servers />
   </component>
@@ -248,10 +227,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="402" y="0" key="#app2/0.0.1366.728@0.0.1366.728" timestamp="1582734876313" />
-    <state x="275" y="22" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1583308582871">
+    <state x="274" y="22" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586465069117">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="275" y="22" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1583308582871" />
+    <state x="274" y="22" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1586465069117" />
     <state x="438" y="167" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1585066650829">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -260,22 +239,22 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="874" y="44" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1585069376093" />
-    <state width="1323" height="192" key="GridCell.Tab.0.bottom" timestamp="1586457478206">
+    <state width="1323" height="132" key="GridCell.Tab.0.bottom" timestamp="1586466410360">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="192" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1586457478206" />
-    <state width="1323" height="192" key="GridCell.Tab.0.center" timestamp="1586457478206">
+    <state width="1323" height="132" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1586466410360" />
+    <state width="1323" height="132" key="GridCell.Tab.0.center" timestamp="1586466410360">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="192" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1586457478206" />
-    <state width="1323" height="192" key="GridCell.Tab.0.left" timestamp="1586457478206">
+    <state width="1323" height="132" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1586466410360" />
+    <state width="1323" height="132" key="GridCell.Tab.0.left" timestamp="1586466410360">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="192" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1586457478206" />
-    <state width="1323" height="192" key="GridCell.Tab.0.right" timestamp="1586457478206">
+    <state width="1323" height="132" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1586466410360" />
+    <state width="1323" height="132" key="GridCell.Tab.0.right" timestamp="1586466410360">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="192" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1586457478206" />
+    <state width="1323" height="132" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1586466410360" />
     <state width="1323" height="225" key="GridCell.Tab.1.bottom" timestamp="1586451012448">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -300,10 +279,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="184" y="6" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1585069727250" />
-    <state x="379" y="188" key="com.intellij.ide.util.TipDialog" timestamp="1586451999257">
+    <state x="379" y="188" key="com.intellij.ide.util.TipDialog" timestamp="1586499493076">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="379" y="188" key="com.intellij.ide.util.TipDialog/0.0.1366.728@0.0.1366.728" timestamp="1586451999257" />
+    <state x="379" y="188" key="com.intellij.ide.util.TipDialog/0.0.1366.728@0.0.1366.728" timestamp="1586499493076" />
     <state x="346" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1586412435079">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -324,11 +303,11 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/3$app2__1_.coverage" NAME="app2 (1) Coverage Results" MODIFIED="1586450584347" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3$clock.coverage" NAME="clock Coverage Results" MODIFIED="1585822682727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/3$temp__1_.coverage" NAME="temp (1) Coverage Results" MODIFIED="1586456454287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../333" />
+    <SUITE FILE_PATH="coverage/3$temp__1_.coverage" NAME="temp (1) Coverage Results" MODIFIED="1586465006938" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../333" />
     <SUITE FILE_PATH="coverage/3$test.coverage" NAME="test Coverage Results" MODIFIED="1583342028382" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3$app2.coverage" NAME="app2 Coverage Results" MODIFIED="1582735966450" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/3$DataTable.coverage" NAME="DataTable Coverage Results" MODIFIED="1586105651764" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/3$DataTable.coverage" NAME="DataTable Coverage Results" MODIFIED="1586465053924" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3$set_webhook.coverage" NAME="set_webhook Coverage Results" MODIFIED="1586452012634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/3$temp.coverage" NAME="temp Coverage Results" MODIFIED="1586457478184" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/3$temp.coverage" NAME="temp Coverage Results" MODIFIED="1586465084356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
   </component>
 </project>

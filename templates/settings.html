@@ -7,11 +7,11 @@
     <body>
     <form method="GET" action="/result_settings">
         Время, через которое бот будет напоминать о необходимости повторить слова:
-        <input type="text" name="time_remiend"><br>
+        <input type="text" name="time_remiend" value = {{time}}><br>
         Количество слов в одном раунде заучивания:
-        <input type="text" name="count_word"><br>
+        <input type="text" name="count_word" value = {{count_word_raund}}><br>
         Количество правильных ответов, после которых считается, что слово выучено:
-        <input type="text" name="count_answer"><br>
+        <input type="text" name="count_answer" value = {{count_true_answer}}><br>
         <input type="submit" value="Сохранить"><br><br>
     </form>
 

@@ -13,7 +13,6 @@ Base = declarative_base()
 engine = create_engine(
     'postgres://waactudsnfbwxu:e73f01ad438e68683523415d9317065e7e3995a036d26451c6fe166b186cc775@ec2-54-75-231-215.eu-west-1.compute.amazonaws.com:5432/d6cpom1s22furu',
     echo=True)
-#engine = create_engine('sqlite:///database.db', echo=True)
 metadata = MetaData()
 
 # Сессия
