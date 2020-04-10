@@ -207,16 +207,15 @@ def show_round_area(user1, raund):
     set_round_keyboard(word, user1)
 
     # Отправка сообщения с вопросом
-    send_question_message(user1, raund)
+    send_question_message(user1, word)
 
 
 # Показать пример использования слова пользователю
-def send_example_message(user1, raund):
+def send_example_message(user1):
     # Вытащить случайное предложение с примером употребления слова
     word = DataRaund.get_word(user1)
     examples = Examples.get_example(word)
     rand_example = examples[random.randint(0, len(examples) - 1)][0]
-    raund.example_or_not(user1, 0)
     # Ответ
     viber.send_messages(user1, [
         TextMessage(text=rand_example,
@@ -301,6 +300,7 @@ def check_answer(viber_request, user1, raund):
         num_question += 1
     raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
     user.set_last_time_answer(user1)
+    raund.example_or_not(user1, 0)
 
 
 # Отправка сообщения с результатами
