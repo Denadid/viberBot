@@ -66,7 +66,7 @@
       <recent name="D:\GG\КПП\3\33" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.set_webhook">
+  <component name="RunManager" selected="Python.temp">
     <configuration name="DataTable" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="3" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -157,9 +157,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.temp" />
         <item itemvalue="Python.set_webhook" />
         <item itemvalue="Python.app2 (1)" />
-        <item itemvalue="Python.temp" />
       </list>
     </recent_temporary>
   </component>
@@ -206,7 +206,7 @@
       <workItem from="1586441613377" duration="8082000" />
       <workItem from="1586452000376" duration="13432000" />
       <workItem from="1586499494079" duration="10662000" />
-      <workItem from="1586513404550" duration="552000" />
+      <workItem from="1586513404550" duration="1595000" />
     </task>
     <servers />
   </component>
@@ -238,22 +238,22 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="874" y="44" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1586502116726" />
-    <state width="1323" height="190" key="GridCell.Tab.0.bottom" timestamp="1586510266907">
+    <state width="1323" height="183" key="GridCell.Tab.0.bottom" timestamp="1586514975807">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="190" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1586510266907" />
-    <state width="1323" height="190" key="GridCell.Tab.0.center" timestamp="1586510266907">
+    <state width="1323" height="183" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1586514975807" />
+    <state width="1323" height="183" key="GridCell.Tab.0.center" timestamp="1586514975807">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="190" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1586510266907" />
-    <state width="1323" height="190" key="GridCell.Tab.0.left" timestamp="1586510266907">
+    <state width="1323" height="183" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1586514975807" />
+    <state width="1323" height="183" key="GridCell.Tab.0.left" timestamp="1586514975807">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="190" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1586510266907" />
-    <state width="1323" height="190" key="GridCell.Tab.0.right" timestamp="1586510266907">
+    <state width="1323" height="183" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1586514975807" />
+    <state width="1323" height="183" key="GridCell.Tab.0.right" timestamp="1586514975807">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="190" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1586510266907" />
+    <state width="1323" height="183" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1586514975807" />
     <state width="1323" height="190" key="GridCell.Tab.1.bottom" timestamp="1586510266907">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -325,7 +325,7 @@
     <SUITE FILE_PATH="coverage/3$test.coverage" NAME="test Coverage Results" MODIFIED="1583342028382" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3$app2.coverage" NAME="app2 Coverage Results" MODIFIED="1582735966450" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3$DataTable.coverage" NAME="DataTable Coverage Results" MODIFIED="1586465053924" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/3$temp.coverage" NAME="temp Coverage Results" MODIFIED="1586506424331" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
-    <SUITE FILE_PATH="coverage/3$set_webhook.coverage" NAME="set_webhook Coverage Results" MODIFIED="1586509865486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/3$set_webhook.coverage" NAME="set_webhook Coverage Results" MODIFIED="1586514910935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/3$temp.coverage" NAME="temp Coverage Results" MODIFIED="1586514975776" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
   </component>
 </project>
