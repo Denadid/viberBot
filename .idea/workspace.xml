@@ -205,7 +205,7 @@
       <workItem from="1586410628305" duration="20573000" />
       <workItem from="1586441613377" duration="8082000" />
       <workItem from="1586452000376" duration="13432000" />
-      <workItem from="1586499494079" duration="3127000" />
+      <workItem from="1586499494079" duration="4286000" />
     </task>
     <servers />
   </component>
@@ -287,6 +287,20 @@
     <state x="346" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728@0.0.1366.728" timestamp="1586412435079" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app2.py</url>
+          <line>46</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app2.py</url>
+          <line>52</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="viber_request.message.text[0:len_count_raund] " language="Python" />

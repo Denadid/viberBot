@@ -42,7 +42,6 @@ def incoming():
         parsing_request(viber_request)
     if isinstance(viber_request, ViberMessageRequest):
         user_id = user.find_user(viber_request.sender.id)
-
         count = user.get_count_press(user_id)
 
         if count == -1:
@@ -151,7 +150,7 @@ def parsing_request(viber_request):
             raund.example_or_not(user_id, 1)
             send_example_message(user_id)
             # Если пользователь не запросил вывода примера и выбрал слово
-        else:
+        elif DataRaund.get_this_example(user_id) != 1:
             # Проверка на правильность ответа
             check_answer(viber_request, user_id, raund)
         if num_question < total_count_raund-1:
@@ -208,17 +207,16 @@ def show_round_area(user1, raund):
     set_round_keyboard(word, user1)
 
     # Отправка сообщения с вопросом
-    send_question_message(user1, word)
-    raund.example_or_not(user1, 0)
+    send_question_message(user1, raund)
 
 
 # Показать пример использования слова пользователю
-def send_example_message(user1):
+def send_example_message(user1, raund):
     # Вытащить случайное предложение с примером употребления слова
     word = DataRaund.get_word(user1)
     examples = Examples.get_example(word)
     rand_example = examples[random.randint(0, len(examples) - 1)][0]
-
+    raund.example_or_not(user1, 0)
     # Ответ
     viber.send_messages(user1, [
         TextMessage(text=rand_example,
