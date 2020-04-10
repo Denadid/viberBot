@@ -58,7 +58,8 @@ def incoming():
                         message = viber_request.message.text
                         if viber_request.message.text[0:len_count_raund].isdigit():
                             if Users.get_new_num_question(user_id) != Users.get_old_num_question(user_id):
-                                user.set_count_press(user_id, DataRaund.get_one_answer(user_id)[0], viber_request.message.text[0:len_count_raund])
+                                user.set_count_press(user_id, DataRaund.get_one_answer(user_id)[0],
+                                                     viber_request.message.text[0:len_count_raund])
                             value = Users.get_count_press(user_id)
                             value += 1
                             user.set_count_press(user_id, value, viber_request.message.text[0:len_count_raund])
@@ -84,7 +85,9 @@ def index():
 # URL-адрес для настроек бота
 @app.route('/settings')
 def settings():
-    return render_template('settings.html', time=Settings.get_clock_time(), count_word_raund=Settings.get_count_word_raund(), count_true_answer=Settings.get_count_true_answer())
+    return render_template('settings.html', time=Settings.get_clock_time(),
+                           count_word_raund=Settings.get_count_word_raund(),
+                           count_true_answer=Settings.get_count_true_answer())
 
 
 # Получение значений настроек бота
@@ -95,7 +98,8 @@ def result_settings():
     count_answer = int(request.args.get('count_answer'))
     setting = Settings()
     setting.edit_settings(time_remiend, count_word, count_answer)
-    return render_template('settings.html', time=time_remiend, count_word_raund=count_word, count_true_answer=count_answer)
+    return render_template('settings.html', time=time_remiend, count_word_raund=count_word,
+                           count_true_answer=count_answer)
 
 
 # Обработка запроса от пользователя
@@ -153,7 +157,7 @@ def parsing_request(viber_request):
         else:
             # Проверка на правильность ответа
             check_answer(viber_request, user_id, raund)
-        if num_question < total_count_raund-1:
+        if num_question < total_count_raund - 1:
             # Продолжение раунда
             show_round_area(user_id, raund)
         else:  # При ответе на 10 вопросв - закончить раунд
@@ -208,6 +212,7 @@ def show_round_area(user1, raund):
 
     # Отправка сообщения с вопросом
     send_question_message(user1, word)
+    raund.example_or_not(user1, 0)
 
 
 # Показать пример использования слова пользователю
@@ -274,33 +279,33 @@ def check_answer(viber_request, user1, raund):
     num_incorrect_answers = DataRaund.get_one_answer(user1)[2]
     len_count_raund = len(str(num_question))
 
-    if viber_request.message.text[len_count_raund:] == translate:
-        # Правильный ответ
-        num_correct_answer += 1
-        count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 1)
-        # Отправка сообщения
-        message = f"Ответ правильный. Количество правильных ответов на данное слово: {count_ok_answer}"
-        viber.send_messages(user1, [
-            TextMessage(text=message)
-        ])
+    if viber_request.message.text[0:len_count_raund].isdigit():
+        if viber_request.message.text[len_count_raund:] == translate:
+            # Правильный ответ
+            num_question += 1
+            num_correct_answer += 1
+            count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 1)
+            # Отправка сообщения
+            message = f"Ответ правильный. Количество правильных ответов на данное слово: {count_ok_answer}"
+            viber.send_messages(user1, [
+                TextMessage(text=message)
+            ])
 
-    else:
-        # Неправильный ответ
-        num_incorrect_answers += 1
+        else:
+            # Неправильный ответ
+            num_question += 1
+            num_incorrect_answers += 1
+            learn.reset_true_answer(user1, viber_request.message.text)
+            count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 0)
+            # Отправка сообщения
+            message = f"Ответ неправильный. Количество правильных ответов на данное слово: {count_ok_answer}"
+            viber.send_messages(user1, [
+                TextMessage(text=message)
+            ])
 
-        learn.reset_true_answer(user1, viber_request.message.text)
-        count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 0)
-        # Отправка сообщения
-        message = f"Ответ неправильный. Количество правильных ответов на данное слово: {count_ok_answer}"
-        viber.send_messages(user1, [
-            TextMessage(text=message)
-        ])
     # Сохранения новых параметров пользователя
-    if DataRaund.get_this_example(user1) == 0:
-        num_question += 1
     raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
     user.set_last_time_answer(user1)
-    raund.example_or_not(user1, 0)
 
 
 # Отправка сообщения с результатами
