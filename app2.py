@@ -206,13 +206,17 @@ def show_round_area(user1, raund):
         word = DataRaund.get_word(user1)
 
     dt_raund = DataRaund.get_one_answer(user1)
-    raund.set_one_answer(user1, word, dt_raund[0], dt_raund[1], dt_raund[2])
     # Расстановка кнопок на клавиатуре
     set_round_keyboard(word, user1)
 
     # Отправка сообщения с вопросом
     send_question_message(user1, word)
-    raund.example_or_not(user1, 0)
+    num_question = dt_raund[0]
+    if DataRaund.get_this_example(user1) == 0:
+        num_question +=1
+        raund.set_one_answer(user1, word, num_question, dt_raund[1], dt_raund[2])
+    else:
+        raund.example_or_not(user1, 0)
 
 
 # Показать пример использования слова пользователю
@@ -282,7 +286,6 @@ def check_answer(viber_request, user1, raund):
     if viber_request.message.text[0:len_count_raund].isdigit():
         if viber_request.message.text[len_count_raund:] == translate:
             # Правильный ответ
-            num_question += 1
             num_correct_answer += 1
             count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 1)
             # Отправка сообщения
@@ -293,7 +296,6 @@ def check_answer(viber_request, user1, raund):
 
         else:
             # Неправильный ответ
-            num_question += 1
             num_incorrect_answers += 1
             learn.reset_true_answer(user1, viber_request.message.text)
             count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 0)
