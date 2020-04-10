@@ -150,7 +150,7 @@ def parsing_request(viber_request):
             raund.example_or_not(user_id, 1)
             send_example_message(user_id)
             # Если пользователь не запросил вывода примера и выбрал слово
-        elif DataRaund.get_this_example(user_id) != 1:
+        else:
             # Проверка на правильность ответа
             check_answer(viber_request, user_id, raund)
         if num_question < total_count_raund-1:
