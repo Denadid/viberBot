@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 import json
 import random
+import sqlite3
 
 # Декларативный базовый класс
 Base = declarative_base()
@@ -174,7 +175,7 @@ class Users(Base):
         lst_id = []
         for s in select_user:
             delta = datetime.now() - s[1]
-            if int(delta.seconds // 60) == clock_time:
+            if int(delta.seconds / 60) == clock_time:
                 lst_id.append(s[0])
 
         return lst_id
