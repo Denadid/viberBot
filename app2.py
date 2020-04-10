@@ -200,7 +200,7 @@ def show_round_area(user1, raund):
         word = Words.get_one_random_word()
     else:
         word = DataRaund.get_word(user1)
-    print('*************************************', word)
+
     dt_raund = DataRaund.get_one_answer(user1)
     raund.set_one_answer(user1, word, dt_raund[0], dt_raund[1], dt_raund[2])
     # Расстановка кнопок на клавиатуре
@@ -298,7 +298,8 @@ def check_answer(viber_request, user1, raund):
             TextMessage(text=message)
         ])
     # Сохранения новых параметров пользователя
-    num_question += 1
+    if DataRaund.get_this_example(user1) == 0:
+        num_question += 1
     raund.set_one_answer(user1, word, num_question, num_correct_answer, num_incorrect_answers)
     user.set_last_time_answer(user1)
 
