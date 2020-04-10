@@ -169,16 +169,21 @@ class Users(Base):
 
     def get_reminder(self):
         session = Session()
-        select_user = session.query(Users.user_id, Users.last_time).all()
-        session.close()
-        clock_time = int(Settings.get_clock_time())
-        lst_id = []
-        for s in select_user:
-            delta = datetime.now() - s[1]
-            if (int(delta.seconds / 60)) >= clock_time:
-                lst_id.append(s[0])
+        try:
+            select_user = session.query(Users.user_id, Users.last_time).all()
+            session.close()
 
-        return lst_id
+            clock_time = int(Settings.get_clock_time())
+            lst_id = []
+            for s in select_user:
+                delta = datetime.now() - s[1]
+                if (int(delta.seconds / 60)) >= clock_time:
+                    lst_id.append(s[0])
+
+            return lst_id
+        except:
+            return -1
+
 
 
 class Learning(Base):

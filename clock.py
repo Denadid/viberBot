@@ -13,7 +13,7 @@ user = Users()
 def time_job():
     requests.get(URL)
     users = user.get_reminder()
-    if users != None:
+    if users != -1:
         for us in users:
             clock_message(us)
 
