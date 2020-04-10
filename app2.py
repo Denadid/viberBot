@@ -55,7 +55,6 @@ def incoming():
                     if str(viber_request.message_token) != MessageInfo.get_token_message(user_id):
                         msginf = MessageInfo()
                         msginf.set_token_message(user_id, viber_request.message_token)
-                        message = viber_request.message.text
                         if viber_request.message.text[0:len_count_raund].isdigit():
                             if Users.get_new_num_question(user_id) != Users.get_old_num_question(user_id):
                                 user.set_count_press(user_id, DataRaund.get_one_answer(user_id)[0],
@@ -148,7 +147,7 @@ def parsing_request(viber_request):
 
         # Продолжение уже начатого раунда, если раунд не закончился
         total_count_raund = int(Settings.get_count_word_raund())  # Общее количество раундов (по условию)
-        num_question = DataRaund.get_one_answer(user_id)[0]
+
         # Обработка команды "show_example": вывод примера употребления слова
         if viber_request.message.text == "show_example":
             raund.example_or_not(user_id, 1)
@@ -157,6 +156,7 @@ def parsing_request(viber_request):
         else:
             # Проверка на правильность ответа
             check_answer(viber_request, user_id, raund)
+        num_question = DataRaund.get_one_answer(user_id)[0]
         if num_question < total_count_raund:
             # Продолжение раунда
             show_round_area(user_id, raund, viber_request)
@@ -202,22 +202,19 @@ def show_round_area(user1, raund, viber_request):
     word = ''
     if DataRaund.get_this_example(user1) == 0:
         word = Words.get_one_random_word()
+        dt_raund = DataRaund.get_one_answer(user1)
+        raund.set_one_answer(user1, word, dt_raund[0], dt_raund[1], dt_raund[2])
     else:
         word = DataRaund.get_word(user1)
 
-    dt_raund = DataRaund.get_one_answer(user1)
     # Расстановка кнопок на клавиатуре
     set_round_keyboard(word, user1)
 
     # Отправка сообщения с вопросом
     send_question_message(user1, word)
-    num_question = dt_raund[0]
-    len_count_raund = len(str(num_question))
-    if viber_request.message.text[0:len_count_raund].isdigit():
-        num_question += 1
-    else:
+
+    if DataRaund.get_this_example(user1) == 1:
         raund.example_or_not(user1, 0)
-    raund.set_one_answer(user1, word, num_question, dt_raund[1], dt_raund[2])
 
 
 # Показать пример использования слова пользователю
@@ -286,6 +283,7 @@ def check_answer(viber_request, user1, raund):
 
     if viber_request.message.text[len_count_raund:] == translate:
         # Правильный ответ
+        num_question += 1
         num_correct_answer += 1
         count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 1)
         # Отправка сообщения
@@ -296,6 +294,7 @@ def check_answer(viber_request, user1, raund):
 
     else:
         # Неправильный ответ
+        num_question += 1
         num_incorrect_answers += 1
         learn.reset_true_answer(user1, viber_request.message.text)
         count_ok_answer = learn.set_learning(user1, viber_request.message.text[len_count_raund:], 0)
