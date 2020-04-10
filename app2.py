@@ -97,7 +97,7 @@ def result_settings():
     count_answer = int(request.args.get('count_answer'))
     setting = Settings()
     setting.edit_settings(time_remiend, count_word, count_answer)
-    return render_template('settings.html')
+    return render_template('settings.html', time=time_remiend, count_word_raund=count_word, count_true_answer=count_answer)
 
 
 # Обработка запроса от пользователя
