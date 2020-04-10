@@ -324,16 +324,19 @@ def send_result_message(user1):
 
 
 def clock_message(user):
-    # Сообщение
-    message = f"Прошло {Settings.get_clock_time()} минут с момента последнего прохождения теста!" \
-              f" Пройдите заново, чтобы не забыть ранее изученные слова!"
+    try:
+        # Сообщение
+        message = f"Прошло {Settings.get_clock_time()} минут с момента последнего прохождения теста!" \
+                  f" Пройдите заново, чтобы не забыть ранее изученные слова!"
+        # Отправка сообщения
+        viber.send_messages(user, [
+            TextMessage(text=message,
+                        keyboard=clock_keyboard,
+                        tracking_data='tracking_data')
+        ])
+    except:
+        print('Юзер отписан!')
 
-    # Отправка сообщения
-    viber.send_messages(user, [
-        TextMessage(text=message,
-                    keyboard=clock_keyboard,
-                    tracking_data='tracking_data')
-    ])
 
 
 # Запуск сервера
