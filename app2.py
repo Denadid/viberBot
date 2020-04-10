@@ -59,7 +59,6 @@ def incoming():
                         message = viber_request.message.text
                         if viber_request.message.text[0:len_count_raund].isdigit():
                             if Users.get_new_num_question(user_id) != Users.get_old_num_question(user_id):
-
                                 user.set_count_press(user_id, DataRaund.get_one_answer(user_id)[0], viber_request.message.text[0:len_count_raund])
                             value = Users.get_count_press(user_id)
                             value += 1
@@ -113,7 +112,6 @@ def parsing_request(viber_request):
         # Сброс страых данных
         raund.set_one_answer(user_id, None, 0, 0, 0)
         user.set_count_press(user_id, 0, 0)
-        raund.example_or_not(user_id, 0)
 
         # Вывод стартового окна
         show_start_area(viber_request, user_id)
@@ -163,6 +161,7 @@ def parsing_request(viber_request):
             send_result_message(user_id)
 
             # Сброс данных пользователя
+            raund.example_or_not(user_id, 0)
             user.set_count_press(user_id, 0, 0)
             num_question = 0
             raund.set_one_answer(user_id, None, num_question, 0, 0)

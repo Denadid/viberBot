@@ -344,7 +344,7 @@ class DataRaund(Base):
         session.commit()
         session.close()
 
-    def example_or_not(self, user_id, example=0):
+    def example_or_not(self, user_id, example):
         session = Session()
         update_query = session.query(DataRaund).filter(DataRaund.user_id == user_id).one()
         update_query.this_example = example

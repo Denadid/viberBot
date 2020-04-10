@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="3cac4630-f2f0-4afd-a9fe-d2dbc9801d8a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataTable.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataTable.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app2.py" beforeDir="false" afterPath="$PROJECT_DIR$/app2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -205,7 +206,7 @@
       <workItem from="1586410628305" duration="20573000" />
       <workItem from="1586441613377" duration="8082000" />
       <workItem from="1586452000376" duration="13432000" />
-      <workItem from="1586499494079" duration="2245000" />
+      <workItem from="1586499494079" duration="3000000" />
     </task>
     <servers />
   </component>
@@ -233,10 +234,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="438" y="167" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1366.728@0.0.1366.728" timestamp="1585066650829" />
-    <state x="874" y="44" key="FileChooserDialogImpl" timestamp="1585069376093">
+    <state x="874" y="44" key="FileChooserDialogImpl" timestamp="1586502116726">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="874" y="44" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1585069376093" />
+    <state x="874" y="44" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1586502116726" />
     <state width="1323" height="132" key="GridCell.Tab.0.bottom" timestamp="1586466410360">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
